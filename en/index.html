@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MardRisk Academy — AI-Powered Financial Intelligence</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='2' fill='%2300C853'/%3E%3Cpath d='M2 12 L8 4 L14 12' stroke='%23080c0a' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M5 12 L8 7 L11 12' stroke='%23080c0a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' opacity='.5'/%3E%3C/svg%3E" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            emerald: { accent: '#00C853', dim: '#00a844', glow: '#00ff6a22' },
+            dark: { 900: '#080c0a', 800: '#0d1210', 700: '#111916', 600: '#182018', 500: '#1e2a1e' },
+          },
+          fontFamily: {
+            display: ['Syne', 'sans-serif'],
+            body: ['DM Sans', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background-color: #080c0a;
+      color: #e2ece6;
+      font-family: 'DM Sans', sans-serif;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,200,83,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,83,.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .hero-blob {
+      position: absolute;
+      width: 680px; height: 680px;
+      background: radial-gradient(circle, rgba(0,200,83,.18) 0%, transparent 70%);
+      border-radius: 50%;
+      top: -180px; right: -140px;
+      filter: blur(60px);
+      pointer-events: none;
+      animation: pulse-blob 7s ease-in-out infinite;
+    }
+    .hero-blob-2 {
+      position: absolute;
+      width: 420px; height: 420px;
+      background: radial-gradient(circle, rgba(0,200,83,.09) 0%, transparent 70%);
+      border-radius: 50%;
+      bottom: -80px; left: -100px;
+      filter: blur(50px);
+      pointer-events: none;
+      animation: pulse-blob 9s ease-in-out infinite reverse;
+    }
+    @keyframes pulse-blob {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.12); opacity: .75; }
+    }
+    .ticker-wrap { overflow: hidden; }
+    .ticker-track {
+      display: flex; gap: 3rem;
+      animation: ticker 28s linear infinite;
+      white-space: nowrap;
+    }
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    nav {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(8,12,10,.85);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(0,200,83,.12);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #ffffff 30%, #00C853 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: #00C853;
+      color: #080c0a;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      letter-spacing: .03em;
+      padding: .85rem 2rem;
+      border-radius: 2px;
+      border: none; cursor: pointer;
+      transition: background .25s, box-shadow .25s, transform .15s;
+      box-shadow: 0 0 24px rgba(0,200,83,.35);
+      text-decoration: none;
+    }
+    .btn-primary:hover {
+      background: #00e65d;
+      box-shadow: 0 0 40px rgba(0,200,83,.55);
+      transform: translateY(-2px);
+    }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: transparent;
+      color: #00C853;
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      padding: .75rem 1.75rem;
+      border-radius: 2px;
+      border: 1px solid rgba(0,200,83,.45);
+      cursor: pointer;
+      transition: border-color .25s, background .25s, transform .15s;
+      text-decoration: none;
+    }
+    .btn-outline:hover {
+      border-color: #00C853;
+      background: rgba(0,200,83,.07);
+      transform: translateY(-2px);
+    }
+    .feature-card {
+      background: #0d1210;
+      border: 1px solid rgba(0,200,83,.13);
+      border-radius: 4px;
+      padding: 2rem;
+      transition: border-color .3s, box-shadow .3s, transform .3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .feature-card:hover {
+      border-color: rgba(0,200,83,.4);
+      box-shadow: 0 0 32px rgba(0,200,83,.12);
+      transform: translateY(-4px);
+    }
+    .module-row {
+      display: flex; align-items: center; gap: 1.25rem;
+      padding: 1.25rem 1.5rem;
+      background: #0d1210;
+      border: 1px solid rgba(0,200,83,.1);
+      border-radius: 3px;
+      transition: border-color .25s, background .25s;
+    }
+    .module-row:hover {
+      border-color: rgba(0,200,83,.35);
+      background: #111916;
+    }
+    .lang-switch a { font-size: 10px; padding: 2px 6px; }
+  </style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker-wrap bg-[#0d1210] border-b border-[rgba(0,200,83,.15)] py-2 text-xs font-body text-[#4a7a5a]">
+  <div class="ticker-track">
+    <span>PORTFOLIO STRESS-TEST ↗ +18.4%</span>
+    <span class="text-[#00C853]">●</span>
+    <span>AI RISK ANALYSIS · 3RD MODULE NOW AVAILABLE</span>
+    <span class="text-[#00C853]">●</span>
+    <span>DEEP REASONING · PERSONAL FINANCE</span>
+    <span class="text-[#00C853]">●</span>
+    <span>WEALTH PROTECTION RETRAINED PROGRAM</span>
+    <span class="text-[#00C853]">●</span>
+    <span>MARKET SIMULATION ENGINE v2.4</span>
+    <span class="text-[#00C853]">●</span>
+    <span>PORTFOLIO STRESS-TEST ↗ +18.4%</span>
+    <span class="text-[#00C853]">●</span>
+    <span>AI RISK ANALYSIS · 3RD MODULE NOW AVAILABLE</span>
+    <span class="text-[#00C853]">●</span>
+    <span>DEEP REASONING · PERSONAL FINANCE</span>
+    <span class="text-[#00C853]">●</span>
+    <span>WEALTH PROTECTION RETRAINED PROGRAM</span>
+    <span class="text-[#00C853]">●</span>
+    <span>MARKET SIMULATION ENGINE v2.4</span>
+    <span class="text-[#00C853]">●</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 py-4 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-2.5 no-underline">
+      <div class="w-7 h-7 rounded-sm bg-[#00C853] flex items-center justify-center">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 12 L8 4 L14 12" stroke="#080c0a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 12 L8 7 L11 12" stroke="#080c0a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/></svg>
+      </div>
+      <span class="font-display font-800 text-white text-lg tracking-tight">MardRisk <span class="text-[#00C853]">Academy</span></span>
+    </a>
+
+    <ul class="hidden md:flex items-center gap-8 list-none font-body text-sm text-[#8aab96]">
+      <li><a href="#why" class="hover:text-white transition-colors">Why Academy</a></li>
+      <li><a href="#curriculum" class="hover:text-white transition-colors">Curriculum</a></li>
+      <li><a href="#commands" class="hover:text-white transition-colors">Commands</a></li>
+      <li><a href="#testimonials" class="hover:text-white transition-colors">Community</a></li>
+      <li><a href="#newsletter" class="hover:text-white transition-colors">Newsletter</a></li>
+    </ul>
+
+    <!-- Language switcher -->
+    <div class="hidden md:flex items-center gap-1 text-[10px] font-mono border border-[rgba(0,200,83,.25)] rounded px-1 py-0.5 mr-2 lang-switch">
+      <a href="/hy/" class="hover:text-white px-1.5 py-0.5 rounded">ՀՅ</a>
+      <a href="/en/" class="hover:text-white px-1.5 py-0.5 rounded bg-[#00C853] text-black font-semibold">EN</a>
+      <a href="/ru/" class="hover:text-white px-1.5 py-0.5 rounded">RU</a>
+    </div>
+
+    <a href="https://ai.mardriskai.online" target="_blank" class="btn-primary text-sm hidden sm:inline-flex">
+      Open MardRisk 1.1
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+
+    <details class="md:hidden relative">
+      <summary class="list-none cursor-pointer p-2 border border-[rgba(0,200,83,.2)] rounded text-[#00C853]">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </summary>
+      <div class="absolute right-0 top-12 w-56 bg-[#0d1210] border border-[rgba(0,200,83,.18)] rounded p-4 flex flex-col gap-3 text-sm font-body text-[#8aab96] z-50">
+        <a href="#why" class="hover:text-white transition-colors">Why Academy</a>
+        <a href="#curriculum" class="hover:text-white transition-colors">Curriculum</a>
+        <a href="#commands" class="hover:text-white transition-colors">Commands</a>
+        <a href="#testimonials" class="hover:text-white transition-colors">Community</a>
+        <a href="#newsletter" class="hover:text-white transition-colors">Newsletter</a>
+        <div class="flex items-center gap-1 text-[10px] font-mono border border-[rgba(0,200,83,.25)] rounded px-1 py-1 mt-1 lang-switch">
+          <a href="/hy/" class="flex-1 text-center hover:text-white px-1 py-0.5 rounded">ՀՅ</a>
+          <a href="/en/" class="flex-1 text-center hover:text-white px-1 py-0.5 rounded bg-[#00C853] text-black">EN</a>
+          <a href="/ru/" class="flex-1 text-center hover:text-white px-1 py-0.5 rounded">RU</a>
+        </div>
+        <a href="https://ai.mardriskai.online" target="_blank" class="btn-primary text-xs mt-1 justify-center">Open MardRisk 1.1</a>
+      </div>
+    </details>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero" class="relative min-h-[92vh] flex items-center overflow-hidden px-6 lg:px-10">
+  <div class="hero-blob"></div>
+  <div class="hero-blob-2"></div>
+
+  <div class="max-w-7xl mx-auto w-full relative z-10 pt-16 pb-24 grid lg:grid-cols-2 gap-16 items-center">
+
+    <div class="fade-up">
+      <div class="inline-flex items-center gap-2 border border-[rgba(0,200,83,.25)] bg-[rgba(0,200,83,.07)] rounded-full px-4 py-1.5 mb-8">
+        <span class="w-1.5 h-1.5 rounded-full bg-[#00C853] animate-pulse"></span>
+        <span class="text-[#00C853] text-xs font-display font-600 tracking-widest uppercase">MardRisk 1.1</span>
+      </div>
+
+      <h1 class="font-display font-800 text-4xl sm:text-5xl xl:text-[3.75rem] leading-[1.08] tracking-tight mb-6">
+        <span class="gradient-text">Take Control of Your<br/>Financial Future</span><br/>
+        <span class="text-white">Powered by AI<br/>Reasoning.</span>
+      </h1>
+
+      <p class="font-body text-[#8aab96] text-lg leading-relaxed max-w-xl mb-10">
+        Learn to stress-test your investments and protect your capital with <strong class="text-[#c8e8d4] font-500">MardRisk Academy</strong> — where deep AI logic meets real-world financial intelligence.
+      </p>
+
+      <div class="flex flex-wrap gap-4 mb-12">
+        <a href="https://ai.mardriskai.online" target="_blank" class="btn-primary">
+          Open MardRisk 1.1
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="#curriculum" class="btn-outline">
+          View the curriculum
+        </a>
+      </div>
+
+      <div class="flex flex-wrap gap-4">
+        <div class="stat-chip">
+          <span class="font-display font-700 text-[#00C853] text-xl">3</span>
+          <span class="text-[#4a7a5a] text-xs mt-0.5">Core Modules</span>
+        </div>
+        <div class="stat-chip">
+          <span class="font-display font-700 text-[#00C853] text-xl">AI-Powered</span>
+          <span class="text-[#4a7a5a] text-xs mt-0.5">Methodology</span>
+        </div>
+        <div class="stat-chip">
+          <span class="font-display font-700 text-[#00C853] text-xl">Live</span>
+          <span class="text-[#4a7a5a] text-xs mt-0.5">Market Simulations</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="fade-up hidden lg:flex items-center justify-center" style="transition-delay:.2s">
+      <div class="relative w-full max-w-md">
+        <div class="absolute inset-0 rounded-lg" style="background:radial-gradient(ellipse at 50% 30%,rgba(0,200,83,.18) 0%,transparent 70%);filter:blur(30px);transform:scale(1.1);"></div>
+
+        <div class="relative bg-[#0d1210] border border-[rgba(0,200,83,.2)] rounded-lg p-6 shadow-2xl">
+          <div class="flex items-center justify-between mb-5">
+            <span class="font-display font-600 text-sm text-[#8aab96] tracking-wide">Portfolio Risk Score</span>
+            <span class="text-[#00C853] text-xs bg-[rgba(0,200,83,.1)] border border-[rgba(0,200,83,.2)] px-2 py-0.5 rounded-full">LIVE ANALYSIS</span>
+          </div>
+
+          <div class="text-center py-6">
+            <div class="font-display font-800 text-7xl text-white mb-1">72<span class="text-[#00C853] text-4xl">/100</span></div>
+            <div class="text-[#8aab96] text-sm">Stability Index · Stress-Tested</div>
+          </div>
+
+          <div class="flex items-end gap-1.5 h-12 mb-5">
+            <div class="flex-1 rounded-sm" style="height:40%;background:rgba(0,200,83,.25)"></div>
+            <div class="flex-1 rounded-sm" style="height:60%;background:rgba(0,200,83,.35)"></div>
+            <div class="flex-1 rounded-sm" style="height:35%;background:rgba(0,200,83,.25)"></div>
+            <div class="flex-1 rounded-sm" style="height:80%;background:rgba(0,200,83,.55)"></div>
+            <div class="flex-1 rounded-sm" style="height:65%;background:rgba(0,200,83,.45)"></div>
+            <div class="flex-1 rounded-sm" style="height:90%;background:#00C853"></div>
+            <div class="flex-1 rounded-sm" style="height:70%;background:rgba(0,200,83,.5)"></div>
+            <div class="flex-1 rounded-sm" style="height:55%;background:rgba(0,200,83,.4)"></div>
+            <div class="flex-1 rounded-sm" style="height:85%;background:rgba(0,200,83,.6)"></div>
+            <div class="flex-1 rounded-sm" style="height:75%;background:rgba(0,200,83,.5)"></div>
+            <div class="flex-1 rounded-sm" style="height:95%;background:#00C853;box-shadow:0 0 8px #00C85388"></div>
+            <div class="flex-1 rounded-sm" style="height:60%;background:rgba(0,200,83,.4)"></div>
+          </div>
+
+          <div class="space-y-2.5">
+            <div class="flex justify-between text-sm">
+              <span class="text-[#4a7a5a]">Volatility Impact</span>
+              <span class="text-[#e2ece6] font-500">Low · 12.4%</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-[#4a7a5a]">Directional Risk</span>
+              <span class="text-[#00C853] font-500">Protected ✓</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-[#4a7a5a]">AI Confidence</span>
+              <span class="text-[#e2ece6] font-500">94.7%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- WHY ACADEMY -->
+<div class="section-divider"></div>
+
+<section id="why" class="max-w-7xl mx-auto px-6 lg:px-10 py-24">
+  <div class="text-center mb-16 fade-up">
+    <p class="text-[#00C853] font-display text-xs tracking-[.22em] uppercase mb-3">Why Academy</p>
+    <h2 class="font-display font-700 text-3xl sm:text-4xl text-white leading-tight">Intelligence that protects<br/><span class="text-[#8aab96]">your financial future</span></h2>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-6">
+
+    <div class="feature-card fade-up">
+      <div class="w-11 h-11 rounded-sm bg-[rgba(0,200,83,.1)] border border-[rgba(0,200,83,.2)] flex items-center justify-center mb-5">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="8" stroke="#00C853" stroke-width="1.5"/><path d="M7 11l3 3 5-5" stroke="#00C853" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h3 class="font-display font-600 text-white text-lg mb-3">Data-Driven Mindset</h3>
+      <p class="text-[#6a8a76] text-sm leading-relaxed">Replace intuitive decisions with structured, evidence-based frameworks. Learn to read financial signals the way analysts do — with precision and context.</p>
+      <div class="mt-6 pt-5 border-t border-[rgba(0,200,83,.1)] flex items-center gap-2 text-[#00C853] text-xs font-display font-600 tracking-wide">
+        <span>FOUNDATIONS TRACK</span>
+      </div>
+    </div>
+
+    <div class="feature-card fade-up" style="transition-delay:.12s">
+      <div class="w-11 h-11 rounded-sm bg-[rgba(0,200,83,.1)] border border-[rgba(0,200,83,.2)] flex items-center justify-center mb-5">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="14" width="3" height="5" rx="1" fill="#00C853" opacity=".5"/><rect x="9.5" y="9" width="3" height="10" rx="1" fill="#00C853" opacity=".75"/><rect x="16" y="4" width="3" height="15" rx="1" fill="#00C853"/><path d="M4.5 13l5-5 5.5 3 4-6" stroke="#00C853" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h3 class="font-display font-600 text-white text-lg mb-3">AI Risk Analysis</h3>
+      <p class="text-[#6a8a76] text-sm leading-relaxed">Use MardRisk’s proprietary AI engine to model market shocks, simulate tail risks, and stress-test every position in your portfolio — before the market does it to you.</p>
+      <div class="mt-6 pt-5 border-t border-[rgba(0,200,83,.1)] flex items-center gap-2 text-[#00C853] text-xs font-display font-600 tracking-wide">
+        <span>CORE MODULE</span>
+      </div>
+    </div>
+
+    <div class="feature-card fade-up" style="transition-delay:.24s">
+      <div class="w-11 h-11 rounded-sm bg-[rgba(0,200,83,.1)] border border-[rgba(0,200,83,.2)] flex items-center justify-center mb-5">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 3l2 5h5l-4 3 1.5 5L11 13l-4.5 3 1.5-5L4 8h5z" stroke="#00C853" stroke-width="1.5" stroke-linejoin="round"/></svg>
+      </div>
+      <h3 class="font-display font-600 text-white text-lg mb-3">Retrained Wealth Protection</h3>
+      <p class="text-[#6a8a76] text-sm leading-relaxed">Complete the Academy and earn a certificate that demonstrates serious financial competence — proven mastery of AI-powered portfolio protection strategies.</p>
+      <div class="mt-6 pt-5 border-t border-[rgba(0,200,83,.1)] flex items-center gap-2 text-[#00C853] text-xs font-display font-600 tracking-wide">
+        <span>CERTIFICATE</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CURRICULUM -->
+<div class="section-divider"></div>
+
+<section id="curriculum" class="px-6 lg:px-10 py-24 bg-[#0a0f0c]">
+  <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-start">
+
+    <div class="fade-up">
+      <p class="text-[#00C853] font-display text-xs tracking-[.22em] uppercase mb-3">What You Will Learn</p>
+      <h2 class="font-display font-700 text-3xl sm:text-4xl text-white leading-tight mb-5">A curriculum built<br/><span class="text-[#8aab96]">for the modern investor</span></h2>
+      <p class="text-[#6a8a76] text-base leading-relaxed mb-8">
+        Each lesson progressively builds real competence — from core commands to main functions and advanced AI simulations. No fluff. No theory for theory’s sake.
+      </p>
+      <a href="https://ai.mardriskai.online" target="_blank" class="btn-primary inline-flex">
+        Open MardRisk 1.1
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+
+    <div class="space-y-3 fade-up" style="transition-delay:.15s">
+
+      <a href="lesson.html" class="module-row flex no-underline hover:border-[#00C853]/40">
+        <div class="w-8 h-8 rounded-sm bg-[rgba(0,200,83,.12)] border border-[rgba(0,200,83,.25)] flex items-center justify-center flex-shrink-0 font-display font-700 text-[#00C853] text-sm">1</div>
+        <div class="flex-1">
+          <div class="font-display font-600 text-white text-sm mb-0.5">Commands</div>
+          <div class="text-[#4a7a5a] text-xs">Complete guide to MardRisk AI command system — /analyze, /RiskScore, /advice and more</div>
+        </div>
+        <span class="text-[#00C853] text-xs font-display tracking-wide hidden sm:block">LESSON 01 →</span>
+      </a>
+
+      <a href="lesson1.html" class="module-row flex no-underline hover:border-[#00C853]/40">
+        <div class="w-8 h-8 rounded-sm bg-[rgba(0,200,83,.12)] border border-[rgba(0,200,83,.25)] flex items-center justify-center flex-shrink-0 font-display font-700 text-[#00C853] text-sm">2</div>
+        <div class="flex-1">
+          <div class="font-display font-600 text-white text-sm mb-0.5">Core Functions</div>
+          <div class="text-[#4a7a5a] text-xs">Settings, packages, MardRisk Shield, conversation management and essential tools</div>
+        </div>
+        <span class="text-[#00C853] text-xs font-display tracking-wide hidden sm:block">LESSON 02 →</span>
+      </a>
+
+      <a href="lesson2.html" class="module-row flex no-underline hover:border-[#00C853]/40">
+        <div class="w-8 h-8 rounded-sm bg-[rgba(0,200,83,.12)] border border-[rgba(0,200,83,.25)] flex items-center justify-center flex-shrink-0 font-display font-700 text-[#00C853] text-sm">3</div>
+        <div class="flex-1">
+          <div class="font-display font-600 text-white text-sm mb-0.5">Simulations & Stress Tests</div>
+          <div class="text-[#4a7a5a] text-xs">1000 scenarios with multi-agent system, forecasts and deep risk analysis</div>
+        </div>
+        <span class="text-[#00C853] text-xs font-display tracking-wide hidden sm:block">LESSON 03 →</span>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- COMMANDS SECTION -->
+<div class="section-divider"></div>
+
+<section id="commands" class="px-6 lg:px-10 py-24 bg-[#0a0f0c]">
+  <div class="max-w-7xl mx-auto">
+    
+    <div class="flex flex-col lg:flex-row gap-16 items-center mb-16">
+      <div class="flex-1">
+        <p class="text-[#00C853] font-display text-xs tracking-[.22em] uppercase mb-3">MardRisk 1.1 — AI Command System</p>
+        <h2 class="font-display font-700 text-3xl sm:text-4xl lg:text-5xl leading-tight text-white">Command Your Financial Future</h2>
+        <p class="text-[#8aab96] mt-4 max-w-lg text-lg">Institutional-grade AI tools at your command. Real-time analysis, risk scoring, personalized plans, and deep scenario simulations.</p>
+        
+        <div class="mt-8 inline-flex items-center gap-x-2 bg-[#111916] border border-[#00C853]/20 rounded-2xl px-5 py-3 text-sm">
+          <div class="flex items-center gap-1.5">
+            <span class="text-[#00C853] font-mono">/</span>
+            <span class="font-medium">Type commands in chat</span>
+          </div>
+          <div class="h-3 w-px bg-[#00C853]/30"></div>
+          <span class="text-[#4a7a5a] text-xs">Live • Secure • Private • Million-dollar infrastructure</span>
+        </div>
+      </div>
+      
+      <div class="flex-1 bg-[#080c0a] border border-[#00C853]/25 rounded-3xl p-1 shadow-2xl">
+        <div class="bg-[#0d1210] rounded-3xl p-6 font-mono text-xs leading-relaxed">
+          <div class="flex justify-between text-[#4a7a5a] text-[10px] mb-4">
+            <div>MardRisk AI • Live</div>
+            <div class="flex items-center gap-1">
+              <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+            </div>
+          </div>
+          
+          <div class="mb-5">
+            <span class="text-[#00C853]">></span> <span class="text-white">/analyze BTC/USD</span>
+          </div>
+          <div class="pl-5 text-[#a3c4b0] text-[13px] mb-6">
+            BTC <span class="text-white">$67,842</span> • -1.8% (24h)<br>
+            30-day volatility: <span class="text-amber-300">41%</span><br>
+            <span class="text-emerald-400">Bullish signal from ETF inflows + institutional buying</span><br><br>
+            <span class="font-medium text-white">7-day forecast:</span> $69,200 – $73,400
+          </div>
+          
+          <div class="text-[#00C853] text-xs flex items-center gap-2">
+            <span>✓</span> EXPERT MODE: 1240 scenarios simulated
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="feature-card group">
+        <div class="flex justify-between items-start">
+          <div>
+            <div class="inline-block px-4 py-1.5 bg-[#00C853] text-black text-xs font-display font-bold tracking-widest rounded mb-6">/analyze ASSET</div>
+            <h3 class="font-display text-xl font-semibold text-white group-hover:text-[#00C853] transition-colors">Market Intelligence</h3>
+            <p class="text-[#6a8a76] mt-2 text-sm">Live price analysis, volatility history, news impact assessment, current value + latest news and probability forecasts with clear action plan.</p>
+          </div>
+          <div class="text-4xl text-[#00C853]/10 group-hover:text-[#00C853]/30 transition-colors font-display font-bold">01</div>
+        </div>
+        <div class="mt-10 text-xs font-mono text-[#00C853] flex items-center gap-2 flex-wrap">
+          <span class="px-3 py-1 bg-black/30 rounded">BTC/USD</span>
+          <span class="px-3 py-1 bg-black/30 rounded">AMD/USD</span>
+          <span class="px-3 py-1 bg-black/30 rounded">Any asset</span>
+          <span class="text-[#4a7a5a] text-[10px]">Interactive charts in chat • Historical + future forecasts</span>
+        </div>
+      </div>
+
+      <div class="feature-card group">
+        <div class="flex justify-between items-start">
+          <div>
+            <div class="inline-block px-4 py-1.5 bg-[#00C853] text-black text-xs font-display font-bold tracking-widest rounded mb-6">/RiskScore</div>
+            <h3 class="font-display text-xl font-semibold text-white group-hover:text-[#00C853] transition-colors">Personal Risk Assessment</h3>
+            <p class="text-[#6a8a76] mt-2 text-sm">Enter income, savings, debt (e.g. 10000 AMD income, 2000 savings, 30000 debt) → instant 1-100 score + detailed 30/60/90 day reduction plan.</p>
+          </div>
+          <div class="text-4xl text-[#00C853]/10 group-hover:text-[#00C853]/30 transition-colors font-display font-bold">02</div>
+        </div>
+        <div class="mt-8 p-4 bg-[#111916] rounded-2xl text-xs">
+          <div class="flex justify-between"><span class="text-[#4a7a5a]">Income</span><span>10,000 AMD/month</span></div>
+          <div class="h-px bg-white/10 my-3"></div>
+          <div class="flex justify-between text-emerald-400"><span>Risk Score</span><span class="font-bold text-2xl">64</span></div>
+          <div class="mt-4 text-[#00C853] text-xs">Plan: Reduce to &lt;40 in 90 days</div>
+        </div>
+      </div>
+
+      <div class="feature-card group">
+        <div class="flex justify-between items-start">
+          <div>
+            <div class="inline-block px-4 py-1.5 bg-[#00C853] text-black text-xs font-display font-bold tracking-widest rounded mb-6">/advice</div>
+            <h3 class="font-display text-xl font-semibold text-white group-hover:text-[#00C853] transition-colors">Personal Advice</h3>
+            <p class="text-[#6a8a76] mt-2 text-sm">Debt payoff plans (e.g. 1000 AMD debt), expense calculations, step-by-step actions, budget optimization. Full understanding of your situation + precise next steps.</p>
+          </div>
+          <div class="text-4xl text-[#00C853]/10 group-hover:text-[#00C853]/30 transition-colors font-display font-bold">03</div>
+        </div>
+        <p class="mt-8 text-xs italic text-[#4a7a5a]">“What should I do with 1000 AMD debt?” → Instant action plan with detailed expenses</p>
+      </div>
+    </div>
+
+    <div class="mt-16 bg-gradient-to-r from-[#111916] to-[#0d1210] border border-[#00C853]/30 rounded-3xl p-8 lg:p-10 flex flex-col md:flex-row items-center gap-8">
+      <div class="flex-1">
+        <span class="px-6 py-2 bg-[#00C853]/10 text-[#00C853] text-sm font-medium rounded-3xl">EXPERT SIMULATION MODE</span>
+        <h3 class="font-display text-3xl mt-4 leading-none">1000+ Monte Carlo Scenarios</h3>
+        <p class="text-[#8aab96] mt-3">The deep reasoning engine runs thousands of market simulations, historical backtests, currency impact analysis, and stress-tests for any investment or decision before you act.</p>
+      </div>
+      <div class="text-center md:text-right">
+        <a href="https://ai.mardriskai.online" target="_blank" class="btn-primary text-base px-8">Activate expert mode in chat</a>
+      </div>
+    </div>
+
+    <div class="mt-12 text-center">
+      <p class="text-[#4a7a5a] text-sm max-w-md mx-auto">Also answers any financial question — current AMD/USD rate, today’s financial news, business modeling, portfolio analysis and displays live interactive charts (BTC/USD etc.) directly in chat.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<div class="section-divider"></div>
+
+<section id="testimonials" class="max-w-7xl mx-auto px-6 lg:px-10 py-24">
+  <div class="text-center mb-14 fade-up">
+    <p class="text-[#00C853] font-display text-xs tracking-[.22em] uppercase mb-3">Community</p>
+    <h2 class="font-display font-700 text-3xl sm:text-4xl text-white leading-tight mb-4">Early Voices</h2>
+    <p class="text-[#6a8a76] max-w-lg mx-auto text-sm">We are building something the financial world has never seen. Here is what our early-access community members are saying.</p>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-6">
+
+    <div class="testimonial-card fade-up">
+      <div class="flex gap-1">
+        <span class="text-[#00C853] text-sm">★★★★★</span>
+      </div>
+      <p class="text-[#6a8a76] text-sm leading-relaxed italic">"Finally a course that doesn’t just teach theory. The AI stress-testing framework changed how I approach every investment decision."</p>
+      <div class="flex items-center gap-3 mt-2">
+        <div class="w-9 h-9 rounded-full bg-[rgba(0,200,83,.15)] border border-[rgba(0,200,83,.2)] flex items-center justify-center font-display font-700 text-[#00C853] text-sm">AK</div>
+        <div>
+          <div class="text-white text-sm font-display font-600">A. Kovalchyk</div>
+          <div class="text-[#4a6455] text-xs">Portfolio Manager · Warsaw</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="testimonial-card fade-up" style="transition-delay:.12s">
+      <div class="flex gap-1">
+        <span class="text-[#00C853] text-sm">★★★★★</span>
+      </div>
+      <p class="text-[#6a8a76] text-sm leading-relaxed italic">"The budget stress-testing module alone was worth joining the waitlist early. It revealed weak spots in my personal finances that I had completely missed."</p>
+      <div class="flex items-center gap-3 mt-2">
+        <div class="w-9 h-9 rounded-full bg-[rgba(0,200,83,.15)] border border-[rgba(0,200,83,.2)] flex items-center justify-center font-display font-700 text-[#00C853] text-sm">RM</div>
+        <div>
+          <div class="text-white text-sm font-display font-600">R. Mesaoudi</div>
+          <div class="text-[#4a6455] text-xs">Entrepreneur · Dubai</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="testimonial-card fade-up" style="transition-delay:.24s">
+      <div class="flex gap-1">
+        <span class="text-[#00C853] text-sm">★★★★★</span>
+      </div>
+      <p class="text-[#6a8a76] text-sm leading-relaxed italic">"MardRisk Academy builds a bridge between cutting-edge AI research and practical personal finance. The certificate carries real credibility."</p>
+      <div class="flex items-center gap-3 mt-2">
+        <div class="w-9 h-9 rounded-full bg-[rgba(0,200,83,.15)] border border-[rgba(0,200,83,.2)] flex items-center justify-center font-display font-700 text-[#00C853] text-sm">SP</div>
+        <div>
+          <div class="text-white text-sm font-display font-600">S. Petrov</div>
+          <div class="text-[#4a6455] text-xs">Quantitative Analyst · London</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="mt-12 bg-[#0d1210] border border-[rgba(0,200,83,.18)] rounded-lg p-8 flex flex-col sm:flex-row items-center justify-between gap-6 fade-up">
+    <div>
+      <h3 class="font-display font-700 text-xl text-white mb-1">Ready to begin your financial transformation?</h3>
+      <p class="text-[#6a8a76] text-sm">MardRisk 1.1 is waiting for you. The Academy lessons will help you use it more effectively.</p>
+    </div>
+    <a href="https://ai.mardriskai.online" target="_blank" class="btn-primary whitespace-nowrap">
+      Open MardRisk 1.1
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- GET STARTED / LAUNCH -->
+<div class="section-divider"></div>
+
+<section id="newsletter" class="px-6 lg:px-10 py-24 relative overflow-hidden bg-[#0a0f0c]">
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(0,200,83,.09) 0%,transparent 65%);pointer-events:none;"></div>
+
+  <div class="max-w-2xl mx-auto text-center relative z-10 fade-up">
+    <p class="text-[#00C853] font-display text-xs tracking-[.22em] uppercase mb-3">MardRisk 1.1</p>
+    <h2 class="font-display font-700 text-3xl sm:text-4xl text-white leading-tight mb-4">
+      Open MardRisk 1.1 Now<br/><span class="text-[#8aab96]">and Start Protecting Your Finances</span>
+    </h2>
+    <p class="text-[#6a8a76] mb-10 text-sm leading-relaxed">
+      The Academy helps you learn. The main tool — MardRisk 1.1 — is available instantly. Access all commands, simulations, and Shield.
+    </p>
+
+    <a href="https://ai.mardriskai.online" target="_blank" class="btn-primary text-lg px-10 py-4 inline-flex">
+      Open MardRisk 1.1
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+
+    <p class="mt-6 text-[#4a7a5a] text-xs">Available in Advanced plan — 1000 scenario simulations, Shield, and expert mode.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="border-t border-[rgba(0,200,83,.1)] bg-[#080c0a]">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 py-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
+
+    <div class="lg:col-span-1">
+      <div class="flex items-center gap-2.5 mb-4">
+        <div class="w-7 h-7 rounded-sm bg-[#00C853] flex items-center justify-center">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 12 L8 4 L14 12" stroke="#080c0a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <span class="font-display font-700 text-white text-base">MardRisk <span class="text-[#00C853]">Academy</span></span>
+      </div>
+      <p class="text-[#4a6455] text-xs leading-relaxed">The educational division of the MardRisk AI ecosystem. Teaching AI-powered financial intelligence.</p>
+    </div>
+
+    <div>
+      <h4 class="font-display font-600 text-[#8aab96] text-xs tracking-[.15em] uppercase mb-4">Academy</h4>
+      <ul class="space-y-2.5 text-sm text-[#4a6455] list-none">
+        <li><a href="#curriculum" class="hover:text-[#00C853] transition-colors">Curriculum</a></li>
+        <li><a href="#why" class="hover:text-[#00C853] transition-colors">Why Academy</a></li>
+        <li><a href="#commands" class="hover:text-[#00C853] transition-colors">Commands</a></li>
+        <li><a href="#testimonials" class="hover:text-[#00C853] transition-colors">Community</a></li>
+        <li><a href="https://ai.mardriskai.online" target="_blank" class="hover:text-[#00C853] transition-colors">Open MardRisk 1.1</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4 class="font-display font-600 text-[#8aab96] text-xs tracking-[.15em] uppercase mb-4">MardRisk</h4>
+      <ul class="space-y-2.5 text-sm text-[#4a6455] list-none">
+        <li><a href="https://mardriskai.online" target="_blank" class="hover:text-[#00C853] transition-colors">Website</a></li>
+        <li><a href="https://ai.mardriskai.online" target="_blank" class="hover:text-[#00C853] transition-colors">AI Platform</a></li>
+        <li><a href="https://mardriskai.online/en/privacy/" target="_blank" class="hover:text-[#00C853] transition-colors">Privacy Policy</a></li>
+        <li><a href="https://mardriskai.online/en/terms" target="_blank" class="hover:text-[#00C853] transition-colors">Terms of Service</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4 class="font-display font-600 text-[#8aab96] text-xs tracking-[.15em] uppercase mb-4">Newsletter</h4>
+      <p class="text-[#4a6455] text-xs mb-3">Weekly AI financial insights. No spam.</p>
+      <form class="flex flex-col gap-2" onsubmit="handleNewsletter(event)">
+        <input type="email" class="dark-input text-sm" placeholder="your@email.com" required />
+        <button type="submit" class="btn-outline text-sm justify-center">Subscribe</button>
+      </form>
+      <p id="newsletter-success" class="mt-2 text-[#00C853] text-xs hidden">✓ Subscribed.</p>
+    </div>
+
+  </div>
+
+  <div class="border-t border-[rgba(0,200,83,.08)] px-6 lg:px-10 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 max-w-7xl mx-auto">
+    <p class="text-[#2a4a3a] text-xs">© 2025 MardRisk Academy. All rights reserved.</p>
+    <div class="flex gap-6 text-[#2a4a3a] text-xs">
+      <a href="https://mardriskai.online/en/privacy/" target="_blank" class="hover:text-[#00C853] transition-colors">Privacy Policy</a>
+      <a href="https://mardriskai.online/en/terms" target="_blank" class="hover:text-[#00C853] transition-colors">Terms of Service</a>
+      <a href="https://mardriskai.online" target="_blank" class="hover:text-[#00C853] transition-colors">mardriskai.online</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  function handleNewsletter(e) {
+    e.preventDefault();
+    const el = document.getElementById('newsletter-success');
+    el.classList.remove('hidden');
+    e.target.reset();
+    setTimeout(() => el.classList.add('hidden'), 4000);
+  }
+
+  document.querySelectorAll('details a').forEach(link => {
+    link.addEventListener('click', () => {
+      link.closest('details').removeAttribute('open');
+    });
+  });
+
+  console.log('%c🚀 MardRisk Academy (EN) — 3-language sections ready', 'color:#00C853; font-family:monospace; font-size:11px;');
+</script>
+
+</body>
+</html>

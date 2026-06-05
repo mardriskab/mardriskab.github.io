@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MardRisk Academy — Simulations &amp; Stress Tests (Lesson 03)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='2' fill='%2300C853'/%3E%3Cpath d='M2 12 L8 4 L14 12' stroke='%23080c0a' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M5 12 L8 7 L11 12' stroke='%23080c0a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' opacity='.5'/%3E%3C/svg%3E" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            emerald: { accent: '#00C853', dim: '#00a844', glow: '#00ff6a22' },
+            dark: { 900: '#080c0a', 800: '#0d1210', 700: '#111916', 600: '#182018', 500: '#1e2a1e' },
+          },
+          fontFamily: {
+            display: ['Syne', 'sans-serif'],
+            body: ['DM Sans', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background-color: #080c0a; color: #e2ece6; font-family: 'DM Sans', sans-serif; overflow-x: hidden; }
+    body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(0,200,83,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(0,200,83,.025) 1px, transparent 1px); background-size: 48px 48px; pointer-events: none; z-index: 0; }
+    .hero-blob { position: absolute; width: 680px; height: 680px; background: radial-gradient(circle, rgba(0,200,83,.18) 0%, transparent 70%); border-radius: 50%; top: -180px; right: -140px; filter: blur(60px); pointer-events: none; animation: pulse-blob 7s ease-in-out infinite; }
+    .hero-blob-2 { position: absolute; width: 420px; height: 420px; background: radial-gradient(circle, rgba(0,200,83,.09) 0%, transparent 70%); border-radius: 50%; bottom: -80px; left: -100px; filter: blur(50px); pointer-events: none; animation: pulse-blob 9s ease-in-out infinite reverse; }
+    @keyframes pulse-blob { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.12);opacity:.75} }
+    nav { position: sticky; top: 0; z-index: 50; background: rgba(8,12,10,.85); backdrop-filter: blur(18px); border-bottom: 1px solid rgba(0,200,83,.12); }
+    .gradient-text { background: linear-gradient(135deg, #ffffff 30%, #00C853 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .btn-primary { display: inline-flex; align-items: center; gap: .5rem; background: #00C853; color: #080c0a; font-family: 'Syne', sans-serif; font-weight: 700; letter-spacing: .03em; padding: .85rem 2rem; border-radius: 2px; border: none; cursor: pointer; transition: all .25s; box-shadow: 0 0 24px rgba(0,200,83,.35); text-decoration: none; }
+    .btn-primary:hover { background: #00e65d; box-shadow: 0 0 40px rgba(0,200,83,.55); transform: translateY(-2px); }
+    .feature-card { background: #0d1210; border: 1px solid rgba(0,200,83,.13); border-radius: 4px; padding: 1.75rem; transition: all .3s; position: relative; overflow: hidden; }
+    .feature-card:hover { border-color: rgba(0,200,83,.4); box-shadow: 0 0 32px rgba(0,200,83,.12); transform: translateY(-4px); }
+    .fade-up { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+    .scenario-bar { height: 6px; background: #00C853; border-radius: 999px; transition: width 1.2s cubic-bezier(0.23,1,0.32,1); }
+    .lang-switch a { font-size: 10px; padding: 2px 6px; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 py-4 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-2.5 no-underline">
+      <div class="w-7 h-7 rounded-sm bg-[#00C853] flex items-center justify-center">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 12 L8 4 L14 12" stroke="#080c0a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 12 L8 7 L11 12" stroke="#080c0a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/></svg>
+      </div>
+      <span class="font-display font-800 text-white text-lg tracking-tight">MardRisk <span class="text-[#00C853]">Academy</span></span>
+    </a>
+
+    <ul class="hidden md:flex items-center gap-8 list-none font-body text-sm text-[#8aab96]">
+      <li><a href="index.html" class="hover:text-white transition-colors">Home</a></li>
+      <li><a href="lesson.html" class="hover:text-white transition-colors">Lesson 01 — Commands</a></li>
+      <li><a href="lesson1.html" class="hover:text-white transition-colors">Lesson 02 — Core Functions</a></li>
+      <li><a href="#how" class="hover:text-white transition-colors">How it works</a></li>
+      <li><a href="#demo" class="hover:text-white transition-colors">Simulation Demo</a></li>
+    </ul>
+
+    <div class="hidden md:flex items-center gap-1 text-[10px] font-mono border border-[rgba(0,200,83,.25)] rounded px-1 py-0.5 mr-2 lang-switch">
+      <a href="/hy/lesson2.html" class="hover:text-white px-1.5 py-0.5 rounded">ՀՅ</a>
+      <a href="/en/lesson2.html" class="hover:text-white px-1.5 py-0.5 rounded bg-[#00C853] text-black font-semibold">EN</a>
+      <a href="/ru/lesson2.html" class="hover:text-white px-1.5 py-0.5 rounded">RU</a>
+    </div>
+
+    <a href="https://ai.mardriskai.online" target="_blank" class="btn-primary text-sm hidden sm:inline-flex">
+      Open MardRisk 1.1
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+
+    <details class="md:hidden relative">
+      <summary class="list-none cursor-pointer p-2 border border-[rgba(0,200,83,.2)] rounded text-[#00C853]">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </summary>
+      <div class="absolute right-0 top-12 w-56 bg-[#0d1210] border border-[rgba(0,200,83,.18)] rounded p-4 flex flex-col gap-3 text-sm font-body text-[#8aab96] z-50">
+        <a href="index.html" class="hover:text-white transition-colors">Home</a>
+        <a href="lesson.html" class="hover:text-white transition-colors">Lesson 01 — Commands</a>
+        <a href="lesson1.html" class="hover:text-white transition-colors">Lesson 02 — Core Functions</a>
+        <a href="#how" class="hover:text-white transition-colors">How it works</a>
+        <a href="#demo" class="hover:text-white transition-colors">Simulation Demo</a>
+        <div class="flex items-center gap-1 text-[10px] font-mono border border-[rgba(0,200,83,.25)] rounded px-1 py-1 mt-1 lang-switch">
+          <a href="/hy/lesson2.html" class="flex-1 text-center hover:text-white px-1 py-0.5 rounded">ՀՅ</a>
+          <a href="/en/lesson2.html" class="flex-1 text-center hover:text-white px-1 py-0.5 rounded bg-[#00C853] text-black">EN</a>
+          <a href="/ru/lesson2.html" class="flex-1 text-center hover:text-white px-1 py-0.5 rounded">RU</a>
+        </div>
+        <a href="https://ai.mardriskai.online" target="_blank" class="btn-primary text-xs mt-1 justify-center">Open MardRisk 1.1</a>
+      </div>
+    </details>
+  </div>
+</nav>
+
+<section class="relative min-h-[82vh] flex items-center overflow-hidden px-6 lg:px-10 bg-[#080c0a]">
+  <div class="hero-blob"></div>
+  <div class="hero-blob-2"></div>
+
+  <div class="max-w-7xl mx-auto w-full relative z-10 pt-16 pb-12 grid lg:grid-cols-2 gap-16 items-center">
+    <div class="fade-up">
+      <div class="inline-flex items-center gap-2 border border-[rgba(0,200,83,.25)] bg-[rgba(0,200,83,.07)] rounded-full px-4 py-1.5 mb-8">
+        <span class="w-1.5 h-1.5 rounded-full bg-[#00C853] animate-pulse"></span>
+        <span class="text-[#00C853] text-xs font-display font-600 tracking-widest uppercase">LESSON 03 — SIMULATIONS &amp; STRESS TESTS</span>
+      </div>
+
+      <h1 class="font-display font-800 text-4xl sm:text-5xl xl:text-[3.5rem] leading-[1.08] tracking-tight mb-6">
+        <span class="gradient-text">1000 scenarios.</span><br/>
+        <span class="text-white">One optimal answer.</span>
+      </h1>
+
+      <p class="font-body text-[#8aab96] text-xl leading-relaxed max-w-xl mb-10">
+        The multi-agent engine runs thousands of stress tests for any question and finds the most robust strategy. Available only in the Advanced plan.
+      </p>
+
+      <div class="flex flex-wrap gap-3">
+        <a href="#demo" class="btn-primary">Try the simulation demo</a>
+        <a href="https://ai.mardriskai.online" target="_blank" class="btn-outline">Open MardRisk 1.1</a>
+      </div>
+      <p class="mt-4 text-xs text-[#4a7a5a]">Advanced plan only</p>
+    </div>
+
+    <div class="fade-up hidden lg:block" style="transition-delay:.2s">
+      <div class="bg-[#0d1210] border border-[#00C853]/20 rounded-3xl p-8">
+        <div class="uppercase text-[10px] tracking-[2px] text-[#00C853] mb-3">HOW IT WORKS</div>
+        <div class="space-y-4 text-sm">
+          <div class="flex gap-3"><span class="font-mono text-[#00C853]">01</span> <span>User activates the simulation button in chat for any question</span></div>
+          <div class="flex gap-3"><span class="font-mono text-[#00C853]">02</span> <span>System launches 1000 independent scenarios (multi-agent)</span></div>
+          <div class="flex gap-3"><span class="font-mono text-[#00C853]">03</span> <span>Results are aggregated and analyzed</span></div>
+          <div class="flex gap-3"><span class="font-mono text-[#00C853]">04</span> <span>Model presents the best-performing strategy + risk map</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how" class="max-w-7xl mx-auto px-6 lg:px-10 py-20">
+  <div class="text-center mb-12 fade-up">
+    <p class="text-[#00C853] font-display text-xs tracking-[.22em] uppercase mb-3">TECHNOLOGY</p>
+    <h2 class="font-display font-700 text-3xl text-white">How the simulation works</h2>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-6">
+    <div class="feature-card fade-up">
+      <div class="text-4xl mb-4">🧠</div>
+      <h3 class="font-display font-semibold text-xl mb-3">Multi-agent system</h3>
+      <p class="text-[#8aab96] text-sm">1000+ independent “agents” simultaneously model different future states — economic shocks, rate changes, personal life events, and market trends.</p>
+    </div>
+    <div class="feature-card fade-up" style="transition-delay:80ms">
+      <div class="text-4xl mb-4">📊</div>
+      <h3 class="font-display font-semibold text-xl mb-3">Stress-test any question</h3>
+      <p class="text-[#8aab96] text-sm">Just type your question and press the “Simulate” button. The model automatically builds thousands of scenarios and finds the most stable profitable path.</p>
+    </div>
+    <div class="feature-card fade-up" style="transition-delay:160ms">
+      <div class="text-4xl mb-4">🎯</div>
+      <h3 class="font-display font-semibold text-xl mb-3">The winning answer</h3>
+      <p class="text-[#8aab96] text-sm">After 1000 scenarios the system selects the highest-probability successful strategy, shows risks, and gives concrete next steps.</p>
+    </div>
+  </div>
+</section>
+
+<section class="px-6 lg:px-10 py-20 bg-[#0a0f0c]">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <div class="fade-up">
+        <p class="text-[#00C853] font-display text-xs tracking-[.22em] uppercase mb-3">EXAMPLE</p>
+        <h2 class="font-display font-700 text-3xl text-white leading-tight mb-6">“What happens if I buy an apartment today?”</h2>
+        <div class="space-y-4 text-[#8aab96]">
+          <p>The user asks the question and activates simulation.</p>
+          <p>The system runs 1000 scenarios taking into account rate hikes, inflation, real-estate crashes, income changes, loan terms, etc.</p>
+          <p>You receive not one opinion, but the most probable and stable financial path with exact numbers and risk levels.</p>
+        </div>
+      </div>
+
+      <div class="bg-[#0d1210] border border-[#00C853]/20 rounded-3xl p-8 fade-up">
+        <div class="text-sm uppercase tracking-widest text-[#00C853] mb-4">SIMULATION RESULT (EXAMPLE)</div>
+        <div class="space-y-5 text-sm">
+          <div>
+            <div class="flex justify-between mb-1"><span>Best-performing scenario</span> <span class="text-[#00C853]">68%</span></div>
+            <div class="scenario-bar w-[68%] bg-[#00C853]"></div>
+            <div class="text-xs text-[#4a7a5a] mt-1">Buy 2-room apartment with 15% down payment, 15-year mortgage</div>
+          </div>
+          <div>
+            <div class="flex justify-between mb-1"><span>High-risk scenarios</span> <span class="text-amber-400">19%</span></div>
+            <div class="scenario-bar w-[19%] bg-amber-400"></div>
+            <div class="text-xs text-[#4a7a5a] mt-1">Sharp rate increase + income drop</div>
+          </div>
+          <div class="pt-3 border-t border-white/10 text-[#00C853] text-sm font-medium">Recommendation: Wait 4-6 months or choose a smaller apartment</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="max-w-7xl mx-auto px-6 lg:px-10 py-20">
+  <div class="text-center mb-10 fade-up">
+    <p class="text-[#00C853] font-display text-xs tracking-[.22em] uppercase mb-3">CAN BE USED FOR</p>
+    <h2 class="font-display font-700 text-3xl">Not only real estate</h2>
+  </div>
+
+  <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="func-row text-sm">📈 <span class="ml-3">Stock purchase timing</span></div>
+    <div class="func-row text-sm">🏠 <span class="ml-3">Buying a house/apartment</span></div>
+    <div class="func-row text-sm">💼 <span class="ml-3">Business expansion or investment</span></div>
+    <div class="func-row text-sm">🌍 <span class="ml-3">Currency &amp; crypto forecasts</span></div>
+  </div>
+
+  <div class="mt-12 bg-gradient-to-r from-[#111916] to-[#0d1210] border border-[#a064ff]/30 rounded-3xl p-8 lg:p-10 text-center fade-up">
+    <div class="inline-block px-4 py-1 bg-[#a064ff]/10 text-[#a064ff] text-xs font-bold tracking-widest rounded-full mb-4">ADVANCED ONLY</div>
+    <h3 class="font-display text-2xl mb-3">1000-scenario simulation is available only in the Advanced plan</h3>
+    <p class="max-w-md mx-auto text-[#8aab96] mb-6">Pro gives you basic risk scores. Advanced unlocks full multi-agent simulation for any question.</p>
+    <a href="https://ai.mardriskai.online" target="_blank" class="btn-primary">Open MardRisk 1.1 (Advanced)</a>
+  </div>
+</section>
+
+<section id="demo" class="px-6 lg:px-10 py-20 bg-[#0a0f0c]">
+  <div class="max-w-4xl mx-auto">
+    <div class="text-center mb-10 fade-up">
+      <p class="text-[#00C853] font-display text-xs tracking-[.22em] uppercase mb-3">TRY IT NOW</p>
+      <h2 class="font-display font-700 text-3xl text-white">Run the simulation demo</h2>
+      <p class="text-[#8aab96] mt-3">Press the button and watch 1000 scenarios being analyzed in real time</p>
+    </div>
+
+    <div class="bg-[#0d1210] border border-[#00C853]/20 rounded-3xl p-8">
+      <div class="mb-6">
+        <label class="block text-sm text-[#8aab96] mb-2">Your question (example)</label>
+        <input id="simQuestion" type="text" value="What happens if I buy a 2-room apartment in Yerevan today?" class="dark-input w-full">
+      </div>
+
+      <button onclick="runSimulationDemo()" class="btn-primary w-full justify-center text-lg py-4">Run 1000-scenario simulation</button>
+
+      <div id="simProgress" class="hidden mt-8">
+        <div class="flex justify-between text-xs mb-2"><span>Calculating 1000 scenarios...</span> <span id="simPercent">0%</span></div>
+        <div class="h-2 bg-[#111916] rounded overflow-hidden"><div id="simBar" class="h-2 bg-[#00C853] w-0 transition-all" style="width:0%"></div></div>
+        <div id="simStatus" class="text-xs text-[#4a7a5a] mt-2"></div>
+      </div>
+
+      <div id="simResult" class="hidden mt-8 border-t border-white/10 pt-8">
+        <div class="uppercase text-xs tracking-widest text-[#00C853] mb-4">SIMULATION RESULT</div>
+        <div id="simBest" class="text-xl font-display font-semibold mb-2"></div>
+        <div id="simSummary" class="text-[#c8e8d4] mb-6"></div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <div class="bg-[#111916] rounded-2xl p-4">
+            <div class="text-[#4a7a5a] text-xs">Success probability</div>
+            <div id="simSuccess" class="text-3xl font-display font-bold text-[#00C853] mt-1"></div>
+          </div>
+          <div class="bg-[#111916] rounded-2xl p-4">
+            <div class="text-[#4a7a5a] text-xs">Average risk level</div>
+            <div id="simRisk" class="text-3xl font-display font-bold mt-1"></div>
+          </div>
+          <div class="bg-[#111916] rounded-2xl p-4">
+            <div class="text-[#4a7a5a] text-xs">Recommended timing</div>
+            <div id="simTime" class="text-xl font-medium mt-2"></div>
+          </div>
+        </div>
+
+        <button onclick="resetDemo()" class="mt-8 text-sm text-[#8aab96] hover:text-white">Try another question →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="px-6 lg:px-10 py-16 border-t border-b border-[#00C853]/20 bg-[#0a0f0c]">
+  <div class="max-w-3xl mx-auto text-center">
+    <h3 class="font-display font-700 text-2xl mb-3">Ready to see 1000 scenarios in real time?</h3>
+    <p class="text-[#8aab96] mb-8">Open MardRisk 1.1 and run the simulation tool on any question you have.</p>
+    <a href="https://ai.mardriskai.online" target="_blank" class="btn-primary text-lg px-10">Open MardRisk 1.1</a>
+  </div>
+</section>
+
+<footer class="border-t border-[rgba(0,200,83,.1)] bg-[#080c0a] py-12">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 text-center text-[#2a4a3a] text-xs">
+    <p>© 2025 MardRisk Academy • Lesson 03 — Simulations &amp; 1000-scenario stress tests</p>
+    <div class="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-1">
+      <a href="index.html" class="hover:text-[#00C853]">← Back to Home</a>
+      <a href="lesson.html" class="hover:text-[#00C853]">Lesson 01 — Commands</a>
+      <a href="lesson1.html" class="hover:text-[#00C853]">Lesson 02 — Core Functions</a>
+      <a href="https://ai.mardriskai.online" target="_blank" class="hover:text-[#00C853]">Open MardRisk 1.1</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  function runSimulationDemo() {
+    const q = document.getElementById('simQuestion').value || 'What happens if I buy an apartment?';
+    const progress = document.getElementById('simProgress');
+    const result = document.getElementById('simResult');
+    const bar = document.getElementById('simBar');
+    const pct = document.getElementById('simPercent');
+    const status = document.getElementById('simStatus');
+
+    progress.classList.remove('hidden');
+    result.classList.add('hidden');
+    bar.style.width = '0%';
+    pct.textContent = '0%';
+    status.textContent = 'Preparing 1000 agents...';
+
+    let p = 0;
+    const interval = setInterval(() => {
+      p += Math.random() * 18 + 7;
+      if (p > 100) p = 100;
+      bar.style.width = p + '%';
+      pct.textContent = Math.floor(p) + '%';
+
+      if (p < 35) status.textContent = 'Running economic scenarios...';
+      else if (p < 65) status.textContent = 'Calculating personal finance impact...';
+      else if (p < 90) status.textContent = 'Analyzing best paths...';
+      else status.textContent = 'Forming final recommendation...';
+
+      if (p >= 100) {
+        clearInterval(interval);
+        setTimeout(() => showSimResult(q), 420);
+      }
+    }, 140);
+  }
+
+  function showSimResult(question) {
+    document.getElementById('simProgress').classList.add('hidden');
+    const res = document.getElementById('simResult');
+    res.classList.remove('hidden');
+
+    const isApartment = question.toLowerCase().includes('apartment') || question.toLowerCase().includes('house') || question.toLowerCase().includes('buy');
+    document.getElementById('simBest').textContent = isApartment 
+      ? 'Recommended strategy: Buy a smaller apartment or wait 5 months'
+      : 'Recommended strategy: Start with a small position and scale up gradually';
+    document.getElementById('simSummary').textContent = 'Out of 1000 scenarios, 642 showed positive results over a 3-year horizon. The biggest risk: sharp rate increases.';
+    document.getElementById('simSuccess').textContent = isApartment ? '64%' : '71%';
+    document.getElementById('simRisk').textContent = isApartment ? 'Medium' : 'Low-Medium';
+    document.getElementById('simTime').textContent = isApartment ? 'Wait 5 months' : 'Start immediately';
+  }
+
+  function resetDemo() {
+    document.getElementById('simResult').classList.add('hidden');
+    document.getElementById('simProgress').classList.add('hidden');
+  }
+
+  console.log('%c✅ MardRisk Academy (EN) — Lesson 03 ready', 'color:#00C853; font-family:monospace; font-size:12px;');
+</script>
+
+</body>
+</html>

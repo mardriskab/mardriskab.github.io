@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MardRisk Academy — Core Functions (MardRisk 1.1)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='2' fill='%2300C853'/%3E%3Cpath d='M2 12 L8 4 L14 12' stroke='%23080c0a' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M5 12 L8 7 L11 12' stroke='%23080c0a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' opacity='.5'/%3E%3C/svg%3E" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            emerald: { accent: '#00C853', dim: '#00a844', glow: '#00ff6a22' },
+            dark: { 900: '#080c0a', 800: '#0d1210', 700: '#111916', 600: '#182018', 500: '#1e2a1e' },
+          },
+          fontFamily: {
+            display: ['Syne', 'sans-serif'],
+            body: ['DM Sans', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background-color: #080c0a; color: #e2ece6; font-family: 'DM Sans', sans-serif; overflow-x: hidden; }
+    body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(0,200,83,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(0,200,83,.025) 1px, transparent 1px); background-size: 48px 48px; pointer-events: none; z-index: 0; }
+    .hero-blob { position: absolute; width: 680px; height: 680px; background: radial-gradient(circle, rgba(0,200,83,.18) 0%, transparent 70%); border-radius: 50%; top: -180px; right: -140px; filter: blur(60px); pointer-events: none; animation: pulse-blob 7s ease-in-out infinite; }
+    .hero-blob-2 { position: absolute; width: 420px; height: 420px; background: radial-gradient(circle, rgba(0,200,83,.09) 0%, transparent 70%); border-radius: 50%; bottom: -80px; left: -100px; filter: blur(50px); pointer-events: none; animation: pulse-blob 9s ease-in-out infinite reverse; }
+    @keyframes pulse-blob { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.12);opacity:.75} }
+    nav { position: sticky; top: 0; z-index: 50; background: rgba(8,12,10,.85); backdrop-filter: blur(18px); border-bottom: 1px solid rgba(0,200,83,.12); }
+    .gradient-text { background: linear-gradient(135deg, #ffffff 30%, #00C853 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .btn-primary { display: inline-flex; align-items: center; gap: .5rem; background: #00C853; color: #080c0a; font-family: 'Syne', sans-serif; font-weight: 700; letter-spacing: .03em; padding: .85rem 2rem; border-radius: 2px; border: none; cursor: pointer; transition: all .25s; box-shadow: 0 0 24px rgba(0,200,83,.35); text-decoration: none; }
+    .btn-primary:hover { background: #00e65d; box-shadow: 0 0 40px rgba(0,200,83,.55); transform: translateY(-2px); }
+    .feature-card { background: #0d1210; border: 1px solid rgba(0,200,83,.13); border-radius: 4px; padding: 1.75rem; transition: all .3s; position: relative; overflow: hidden; }
+    .feature-card:hover { border-color: rgba(0,200,83,.4); box-shadow: 0 0 32px rgba(0,200,83,.12); transform: translateY(-4px); }
+    .fade-up { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+    .func-row { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.25rem; background: #0d1210; border: 1px solid rgba(0,200,83,.1); border-radius: 3px; transition: border-color .25s, background .25s; }
+    .func-row:hover { border-color: rgba(0,200,83,.35); background: #111916; }
+    .shield-drop { border: 2px dashed rgba(0,200,83,.35); background: #0d1210; transition: all .2s; }
+    .shield-drop.dragover { border-color: #00C853; background: rgba(0,200,83,.05); }
+    .lang-switch a { font-size: 10px; padding: 2px 6px; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 py-4 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-2.5 no-underline">
+      <div class="w-7 h-7 rounded-sm bg-[#00C853] flex items-center justify-center">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 12 L8 4 L14 12" stroke="#080c0a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 12 L8 7 L11 12" stroke="#080c0a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/></svg>
+      </div>
+      <span class="font-display font-800 text-white text-lg tracking-tight">MardRisk <span class="text-[#00C853]">Academy</span></span>
+    </a>
+
+    <ul class="hidden md:flex items-center gap-8 list-none font-body text-sm text-[#8aab96]">
+      <li><a href="index.html" class="hover:text-white transition-colors">Home</a></li>
+      <li><a href="#settings" class="hover:text-white transition-colors">Settings</a></li>
+      <li><a href="#pricing" class="hover:text-white transition-colors">Pricing</a></li>
+      <li><a href="#conversations" class="hover:text-white transition-colors">Conversations</a></li>
+      <li><a href="#shield" class="hover:text-white transition-colors">MardRisk Shield</a></li>
+    </ul>
+
+    <div class="hidden md:flex items-center gap-1 text-[10px] font-mono border border-[rgba(0,200,83,.25)] rounded px-1 py-0.5 mr-2 lang-switch">
+      <a href="/hy/lesson1.html" class="hover:text-white px-1.5 py-0.5 rounded">ՀՅ</a>
+      <a href="/en/lesson1.html" class="hover:text-white px-1.5 py-0.5 rounded bg-[#00C853] text-black font-semibold">EN</a>
+      <a href="/ru/lesson1.html" class="hover:text-white px-1.5 py-0.5 rounded">RU</a>
+    </div>
+
+    <a href="https://ai.mardriskai.online" target="_blank" class="btn-primary text-sm hidden sm:inline-flex">
+      Open MardRisk 1.1
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+
+    <details class="md:hidden relative">
+      <summary class="list-none cursor-pointer p-2 border border-[rgba(0,200,83,.2)] rounded text-[#00C853]">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </summary>
+      <div class="absolute right-0 top-12 w-56 bg-[#0d1210] border border-[rgba(0,200,83,.18)] rounded p-4 flex flex-col gap-3 text-sm font-body text-[#8aab96] z-50">
+        <a href="index.html" class="hover:text-white transition-colors">Home</a>
+        <a href="#settings" class="hover:text-white transition-colors">Settings</a>
+        <a href="#pricing" class="hover:text-white transition-colors">Pricing</a>
+        <a href="#conversations" class="hover:text-white transition-colors">Conversations</a>
+        <a href="#shield" class="hover:text-white transition-colors">MardRisk Shield</a>
+        <div class="flex items-center gap-1 text-[10px] font-mono border border-[rgba(0,200,83,.25)] rounded px-1 py-1 mt-1 lang-switch">
+          <a href="/hy/lesson1.html" class="flex-1 text-center hover:text-white px-1 py-0.5 rounded">ՀՅ</a>
+          <a href="/en/lesson1.html" class="flex-1 text-center hover:text-white px-1 py-0.5 rounded bg-[#00C853] text-black">EN</a>
+          <a href="/ru/lesson1.html" class="flex-1 text-center hover:text-white px-1 py-0.5 rounded">RU</a>
+        </div>
+        <a href="https://ai.mardriskai.online" target="_blank" class="btn-primary text-xs mt-1 justify-center">Open MardRisk 1.1</a>
+      </div>
+    </details>
+  </div>
+</nav>
+
+<section class="relative min-h-[82vh] flex items-center overflow-hidden px-6 lg:px-10 bg-[#080c0a]">
+  <div class="hero-blob"></div>
+  <div class="hero-blob-2"></div>
+
+  <div class="max-w-7xl mx-auto w-full relative z-10 pt-16 pb-12 grid lg:grid-cols-2 gap-16 items-center">
+    <div class="fade-up">
+      <div class="inline-flex items-center gap-2 border border-[rgba(0,200,83,.25)] bg-[rgba(0,200,83,.07)] rounded-full px-4 py-1.5 mb-8">
+        <span class="w-1.5 h-1.5 rounded-full bg-[#00C853] animate-pulse"></span>
+        <span class="text-[#00C853] text-xs font-display font-600 tracking-widest uppercase">LESSON 02 — CORE FUNCTIONS</span>
+      </div>
+
+      <h1 class="font-display font-800 text-4xl sm:text-5xl xl:text-[3.5rem] leading-[1.08] tracking-tight mb-6">
+        <span class="gradient-text">MardRisk 1.1</span><br/>
+        <span class="text-white">Core Functions</span>
+      </h1>
+
+      <p class="font-body text-[#8aab96] text-xl leading-relaxed max-w-xl mb-10">
+        Learn how to manage your account, packages, conversations, and use MardRisk Shield to verify suspicious financial documents.
+      </p>
+
+      <div class="flex flex-wrap gap-3">
+        <a href="#settings" class="btn-primary">Start with Settings</a>
+        <a href="#shield" class="btn-outline">Try Shield</a>
+      </div>
+    </div>
+
+    <div class="fade-up hidden lg:flex justify-center" style="transition-delay:.3s">
+      <div class="bg-[#0d1210] border border-[#00C853]/20 rounded-3xl p-8 max-w-md w-full">
+        <div class="text-[#00C853] text-xs tracking-[2px] font-display mb-3">MARD RISK 1.1 • MANAGEMENT</div>
+        <div class="space-y-4 text-sm">
+          <div class="flex justify-between items-center py-2 border-b border-white/10">
+            <span class="text-[#8aab96]">Language</span>
+            <span class="font-medium text-white">English • Armenian • Russian</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b border-white/10">
+            <span class="text-[#8aab96]">Current Plan</span>
+            <span class="font-medium text-[#00C853]">Pro</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b border-white/10">
+            <span class="text-[#8aab96]">Last Conversation</span>
+            <span class="font-medium">2 hours ago</span>
+          </div>
+          <div class="flex justify-between items-center py-2">
+            <span class="text-[#8aab96]">Shield Checks</span>
+            <span class="font-medium text-white">47</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="settings" class="px-6 lg:px-10 py-20 bg-[#0a0f0c]">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid lg:grid-cols-12 gap-12 items-start">
+      <div class="lg:col-span-5 fade-up">
+        <p class="text-[#00C853] font-display text-xs tracking-[.22em] uppercase mb-3">SETTINGS</p>
+        <h2 class="font-display font-700 text-3xl text-white leading-tight">Personal Settings</h2>
+        <p class="mt-4 text-[#8aab96]">From your account settings you can change the language, download all your data, and switch your current plan at any time.</p>
+      </div>
+
+      <div class="lg:col-span-7 space-y-4 fade-up" style="transition-delay:120ms">
+        <div class="feature-card">
+          <div class="flex items-start justify-between gap-6">
+            <div>
+              <div class="font-display font-semibold text-xl mb-2">Language Change</div>
+              <p class="text-[#8aab96] text-sm">Choose your preferred language. The app will update instantly.</p>
+            </div>
+            <select class="bg-[#111916] border border-[#00C853]/30 text-sm rounded px-4 py-2 focus:outline-none focus:border-[#00C853]">
+              <option>English</option>
+              <option>Armenian</option>
+              <option>Russian</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="flex items-start justify-between gap-6">
+            <div>
+              <div class="font-display font-semibold text-xl mb-2">Download My Data</div>
+              <p class="text-[#8aab96] text-sm">Get a complete archive of all your conversations, risk scores, and profile data (JSON + PDF).</p>
+            </div>
+            <button onclick="downloadData()" class="btn-outline text-sm whitespace-nowrap">Download Data</button>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div>
+            <div class="font-display font-semibold text-xl mb-2">Change Plan</div>
+            <p class="text-[#8aab96] text-sm mb-4">Your current plan: <span class="text-[#00C853] font-medium">Pro</span>. You can switch to a different tier at any time.</p>
+            <a href="#pricing" class="btn-primary text-sm">View All Plans</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing" class="max-w-7xl mx-auto px-6 lg:px-10 py-20">
+  <div class="text-center mb-12 fade-up">
+    <p class="text-[#00C853] font-display text-xs tracking-[.22em] uppercase mb-3">PRICING &amp; PLANS</p>
+    <h2 class="font-display font-700 text-3xl text-white">All 3 Plans</h2>
+    <p class="text-[#8aab96] mt-3 max-w-md mx-auto">See all three packages and learn about their advantages.</p>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-6">
+    <div class="feature-card">
+      <div class="text-[#00C853] text-xs font-display font-bold tracking-widest mb-3">FREE</div>
+      <div class="text-2xl font-display font-semibold mb-1">Basic</div>
+      <div class="text-sm text-[#8aab96] mb-6">Basic financial literacy and AI assistant</div>
+      <ul class="text-sm space-y-3 text-[#c8e8d4]">
+        <li>✓ AI chat-bot for basic financial questions</li>
+        <li>✓ Live prices and exchange rates</li>
+        <li class="opacity-50">✗ Advanced tools not included</li>
+      </ul>
+      <div class="mt-8 text-[#00C853] font-display text-xl font-bold">Free</div>
+      <button onclick="window.location.href='https://ai.mardriskai.online'" class="mt-4 w-full py-3 rounded border border-[#00C853] text-sm font-medium hover:bg-[#00C853] hover:text-black transition">Start Free</button>
+    </div>
+
+    <div class="feature-card border-[#00C853]">
+      <div class="text-[#00C853] text-xs font-display font-bold tracking-widest mb-3 flex items-center gap-2">MOST POPULAR <span class="px-2 py-px bg-[#00C853] text-black text-[10px] rounded">RECOMMENDED</span></div>
+      <div class="text-2xl font-display font-semibold mb-1">Pro</div>
+      <div class="text-sm text-[#8aab96] mb-6">Professional analysis and forecasts</div>
+      <ul class="text-sm space-y-3 text-[#c8e8d4]">
+        <li>✓ Everything in Basic</li>
+        <li>✓ Risk-Score calculation</li>
+        <li>✓ Forecasts and charts</li>
+        <li>✓ MardRisk Shield (limited)</li>
+      </ul>
+      <div class="mt-8">
+        <span class="font-display text-3xl font-bold">$20</span>
+        <span class="text-[#8aab96]">/month</span>
+      </div>
+      <button onclick="window.location.href='https://ai.mardriskai.online'" class="mt-4 w-full py-3 rounded bg-[#00C853] text-black font-medium text-sm hover:bg-[#00e65d] transition">Choose Pro</button>
+    </div>
+
+    <div class="feature-card">
+      <div class="text-[#a064ff] text-xs font-display font-bold tracking-widest mb-3">EXPERT</div>
+      <div class="text-2xl font-display font-semibold mb-1">Advanced</div>
+      <div class="text-sm text-[#8aab96] mb-6">Complete excellence for large investors</div>
+      <ul class="text-sm space-y-3 text-[#c8e8d4]">
+        <li>✓ Everything in Pro</li>
+        <li>✓ 1000+ Monte Carlo simulations</li>
+        <li>✓ Unlimited MardRisk Shield</li>
+      </ul>
+      <div class="mt-8">
+        <span class="font-display text-3xl font-bold" style="color:#a064ff">$80</span>
+        <span class="text-[#8aab96]">/month</span>
+      </div>
+      <button onclick="window.location.href='https://ai.mardriskai.online'" class="mt-4 w-full py-3 rounded border border-[#a064ff] text-sm font-medium hover:bg-[#a064ff] hover:text-black transition">Choose Advanced</button>
+    </div>
+  </div>
+</section>
+
+<section id="conversations" class="px-6 lg:px-10 py-20 bg-[#0a0f0c]">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex items-end justify-between mb-8">
+      <div>
+        <p class="text-[#00C853] font-display text-xs tracking-[.22em] uppercase mb-2">CONVERSATION MANAGEMENT</p>
+        <h2 class="font-display font-700 text-3xl text-white">Delete Old Conversations</h2>
+      </div>
+      <button onclick="deleteAllConvos()" class="btn-outline text-sm">Delete All</button>
+    </div>
+
+    <div class="space-y-3">
+      <div class="func-row justify-between">
+        <div>
+          <div class="font-medium">Budget Stress-Test — 2025-04-02</div>
+          <div class="text-xs text-[#4a7a5a]">12 messages • 14:22</div>
+        </div>
+        <button onclick="deleteConvo(this)" class="text-red-400 hover:text-red-500 text-sm">Delete</button>
+      </div>
+      <div class="func-row justify-between">
+        <div>
+          <div class="font-medium">BTC/USD Analysis — 2025-04-01</div>
+          <div class="text-xs text-[#4a7a5a]">7 messages • 09:41</div>
+        </div>
+        <button onclick="deleteConvo(this)" class="text-red-400 hover:text-red-500 text-sm">Delete</button>
+      </div>
+    </div>
+    <p class="text-[#4a7a5a] text-xs mt-4">Deleted conversations cannot be recovered.</p>
+  </div>
+</section>
+
+<section id="shield" class="max-w-7xl mx-auto px-6 lg:px-10 py-20">
+  <div class="grid lg:grid-cols-2 gap-12 items-start">
+    <div class="fade-up">
+      <p class="text-[#00C853] font-display text-xs tracking-[.22em] uppercase mb-3">PROTECTION</p>
+      <h2 class="font-display font-700 text-3xl text-white leading-tight">MardRisk Shield</h2>
+      <p class="mt-4 text-[#8aab96]">Upload any suspicious financial document (PDF, image, report) and the MardRisk model will instantly analyze it.</p>
+
+      <div class="mt-8 space-y-3 text-sm">
+        <div class="flex gap-3"><span class="text-[#00C853] mt-1">→</span> <span>Real or fake</span></div>
+        <div class="flex gap-3"><span class="text-[#00C853] mt-1">→</span> <span>What risks exist</span></div>
+        <div class="flex gap-3"><span class="text-[#00C853] mt-1">→</span> <span>What the document represents</span></div>
+      </div>
+    </div>
+
+    <div class="fade-up bg-[#0d1210] border border-[#00C853]/20 rounded-3xl p-8" style="transition-delay:140ms">
+      <div class="mb-4 font-medium">Upload a document</div>
+
+      <div id="dropzone" class="shield-drop rounded-2xl p-10 text-center cursor-pointer" onclick="document.getElementById('fileInput').click()">
+        <input type="file" id="fileInput" class="hidden" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" onchange="handleFileSelect(event)">
+        <div class="mx-auto w-12 h-12 rounded-full bg-[#111916] flex items-center justify-center mb-4">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00C853" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </div>
+        <div class="text-sm">Drag and drop a file here or <span class="text-[#00C853]">click to select</span></div>
+        <div class="text-xs text-[#4a7a5a] mt-1">Supported: PDF, PNG, JPG, DOC, DOCX (up to 10 MB)</div>
+      </div>
+
+      <div id="fileInfo" class="hidden mt-4 p-3 bg-[#111916] rounded-xl text-sm flex items-center justify-between">
+        <div id="fileName" class="truncate pr-4"></div>
+        <button onclick="analyzeDocument()" class="btn-primary text-xs px-5 py-2">Analyze with Shield</button>
+      </div>
+
+      <div id="shieldResult" class="hidden mt-6 border border-[#00C853]/30 rounded-2xl p-6 bg-[#080c0a]">
+        <div class="flex items-center gap-2 mb-4">
+          <div id="resultBadge" class="px-3 py-1 rounded-full text-xs font-bold"></div>
+          <div class="text-sm text-[#8aab96]">Analysis complete</div>
+        </div>
+        <div id="resultTitle" class="font-display font-semibold text-xl mb-2"></div>
+        <div id="resultDesc" class="text-sm text-[#c8e8d4] mb-4"></div>
+        <div class="text-xs uppercase tracking-widest text-[#4a7a5a] mb-2">Detected Risks</div>
+        <ul id="resultRisks" class="text-sm space-y-1 mb-5"></ul>
+        <div class="text-xs uppercase tracking-widest text-[#4a7a5a] mb-2">Conclusion</div>
+        <div id="resultConclusion" class="text-sm"></div>
+        <button onclick="resetShield()" class="mt-6 text-xs text-[#8aab96] hover:text-white">Analyze another document →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="px-6 lg:px-10 py-16 border-t border-b border-[#00C853]/20 bg-[#0a0f0c]">
+  <div class="max-w-4xl mx-auto text-center">
+    <h3 class="font-display font-700 text-2xl">Ready to use all functions?</h3>
+    <p class="text-[#8aab96] mb-8">Open MardRisk 1.1 and get full access.</p>
+    <a href="https://ai.mardriskai.online" target="_blank" class="btn-primary mt-6 inline-flex">Open MardRisk 1.1</a>
+  </div>
+</section>
+
+<footer class="border-t border-[rgba(0,200,83,.1)] bg-[#080c0a] py-12">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 text-center text-[#2a4a3a] text-xs">
+    <p>© 2025 MardRisk Academy • Lesson 02 — Core Functions (MardRisk 1.1)</p>
+    <a href="index.html" class="hover:text-[#00C853] mt-4 inline-block">← Back to Home</a>
+    <span class="mx-3">•</span>
+    <a href="lesson.html" class="hover:text-[#00C853]">Lesson 01 — Commands</a>
+    <span class="mx-3">•</span>
+    <a href="lesson2.html" class="hover:text-[#00C853]">Lesson 03 — Simulations</a>
+  </div>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  function downloadData() {
+    const a = document.createElement('a');
+    a.download = 'mardrisk_my_data.json';
+    const blob = new Blob([JSON.stringify({ user: "User", exported_at: new Date().toISOString(), conversations: 47, risk_scores: [72, 64, 81], packages: ["Pro"] }, null, 2)], {type: 'application/json'});
+    a.href = URL.createObjectURL(blob);
+    a.click();
+    alert('Your data has been downloaded (demo): mardrisk_my_data.json');
+  }
+
+  function deleteConvo(el) { if (confirm('Delete this conversation?')) el.closest('.func-row').remove(); }
+  function deleteAllConvos() { if (confirm('Delete all old conversations? This cannot be undone.')) document.querySelectorAll('#conversations .func-row').forEach(r => r.remove()); }
+
+  const dropzone = document.getElementById('dropzone');
+  const fileInput = document.getElementById('fileInput');
+  const fileInfo = document.getElementById('fileInfo');
+  const fileNameEl = document.getElementById('fileName');
+  let currentFile = null;
+
+  if (dropzone) {
+    dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+    dropzone.addEventListener('drop', e => {
+      e.preventDefault(); dropzone.classList.remove('dragover');
+      if (e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
+    });
+  }
+
+  function handleFileSelect(e) { if (e.target.files.length > 0) handleFile(e.target.files[0]); }
+  function handleFile(file) {
+    currentFile = file;
+    if (fileNameEl) fileNameEl.textContent = file.name + ' (' + (file.size/1024).toFixed(1) + ' KB)';
+    if (fileInfo) fileInfo.classList.remove('hidden');
+    const res = document.getElementById('shieldResult'); if (res) res.classList.add('hidden');
+  }
+
+  function analyzeDocument() {
+    if (!currentFile) return;
+    const result = document.getElementById('shieldResult');
+    const badge = document.getElementById('resultBadge');
+    const title = document.getElementById('resultTitle');
+    const desc = document.getElementById('resultDesc');
+    const risks = document.getElementById('resultRisks');
+    const conclusion = document.getElementById('resultConclusion');
+
+    if (result) result.classList.remove('hidden');
+    if (fileInfo) fileInfo.classList.add('hidden');
+
+    const name = currentFile.name.toLowerCase();
+    const isFake = name.includes('fake') || name.includes('scam') || Math.random() > 0.65;
+
+    if (isFake && badge && title && desc && risks && conclusion) {
+      badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-red-500/20 text-red-400';
+      badge.textContent = 'FAKE';
+      title.textContent = 'Document is fake';
+      desc.textContent = 'The model detected inconsistencies in signatures, fonts, and data format.';
+      risks.innerHTML = `<li class="flex gap-2 text-red-300">• Forged signature and stamp</li><li class="flex gap-2 text-red-300">• Inconsistent dates</li>`;
+      conclusion.textContent = 'Not recommended for any financial transaction. Additional verification required.';
+    } else if (badge && title && desc && risks && conclusion) {
+      badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-[#00C853]/20 text-[#00C853]';
+      badge.textContent = 'REAL';
+      title.textContent = 'Document is authentic';
+      desc.textContent = 'No signs of forgery detected. The document meets standards.';
+      risks.innerHTML = `<li class="flex gap-2 text-[#8aab96]">• Data integrity: 96%</li><li class="flex gap-2 text-[#8aab96]">• Signature valid</li>`;
+      conclusion.textContent = 'The document can be used. However, we recommend additional verification with your financial advisor.';
+    }
+  }
+
+  function resetShield() {
+    const res = document.getElementById('shieldResult'); if (res) res.classList.add('hidden');
+    const fi = document.getElementById('fileInfo'); if (fi) fi.classList.add('hidden');
+    currentFile = null; if (fileInput) fileInput.value = '';
+  }
+
+  console.log('%c✅ MardRisk Academy (EN) — Lesson 02 ready', 'color:#00C853; font-family:monospace; font-size:12px;');
+</script>
+
+</body>
+</html>

@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ՄարդՌիսկ Ակադեմիա — Հրամանների դաս և օգտագործման ուղեցույց</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+
+  <!-- Favicon — լոգոյի նման -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='2' fill='%2300C853'/%3E%3Cpath d='M2 12 L8 4 L14 12' stroke='%23080c0a' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M5 12 L8 7 L11 12' stroke='%23080c0a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' opacity='.5'/%3E%3C/svg%3E" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            emerald: { accent: '#00C853', dim: '#00a844', glow: '#00ff6a22' },
+            dark: { 900: '#080c0a', 800: '#0d1210', 700: '#111916', 600: '#182018', 500: '#1e2a1e' },
+          },
+          fontFamily: {
+            display: ['Syne', 'sans-serif'],
+            body: ['DM Sans', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background-color: #080c0a;
+      color: #e2ece6;
+      font-family: 'DM Sans', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Grid noise overlay */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,200,83,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,83,.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Glow blobs */
+    .hero-blob {
+      position: absolute;
+      width: 680px; height: 680px;
+      background: radial-gradient(circle, rgba(0,200,83,.18) 0%, transparent 70%);
+      border-radius: 50%;
+      top: -180px; right: -140px;
+      filter: blur(60px);
+      pointer-events: none;
+      animation: pulse-blob 7s ease-in-out infinite;
+    }
+    .hero-blob-2 {
+      position: absolute;
+      width: 420px; height: 420px;
+      background: radial-gradient(circle, rgba(0,200,83,.09) 0%, transparent 70%);
+      border-radius: 50%;
+      bottom: -80px; left: -100px;
+      filter: blur(50px);
+      pointer-events: none;
+      animation: pulse-blob 9s ease-in-out infinite reverse;
+    }
+    @keyframes pulse-blob {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.12); opacity: .75; }
+    }
+
+    /* Nav */
+    nav {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(8,12,10,.85);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(0,200,83,.12);
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #ffffff 30%, #00C853 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: #00C853;
+      color: #080c0a;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      letter-spacing: .03em;
+      padding: .85rem 2rem;
+      border-radius: 2px;
+      border: none; cursor: pointer;
+      transition: all .25s;
+      box-shadow: 0 0 24px rgba(0,200,83,.35);
+      text-decoration: none;
+    }
+    .btn-primary:hover {
+      background: #00e65d;
+      box-shadow: 0 0 40px rgba(0,200,83,.55);
+      transform: translateY(-2px);
+    }
+
+    .feature-card {
+      background: #0d1210;
+      border: 1px solid rgba(0,200,83,.13);
+      border-radius: 4px;
+      padding: 2rem;
+      transition: all .3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .feature-card:hover {
+      border-color: rgba(0,200,83,.4);
+      box-shadow: 0 0 32px rgba(0,200,83,.12);
+      transform: translateY(-4px);
+    }
+
+    .command-box {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      background: #080c0a;
+      border: 1px solid #00C853;
+      border-radius: 8px;
+      padding: 1.25rem;
+      color: #00C853;
+      font-size: 15px;
+      box-shadow: 0 0 20px rgba(0,200,83,.2);
+    }
+
+    .fade-up {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* PRICING STYLES + SLIDER */
+    .pr-cards {
+      display: flex;
+      gap: 1.5rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 1rem;
+    }
+    .pr-card {
+      flex: 0 0 100%;
+      max-width: 380px;
+      scroll-snap-align: start;
+      background: #0d1210;
+      border: 1px solid rgba(0,200,83,.2);
+      border-radius: 16px;
+      padding: 2rem;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+    .pr-card:hover {
+      transform: translateY(-12px) scale(1.03);
+      box-shadow: 0 0 40px rgba(0,200,83,.25);
+      border-color: #00C853;
+    }
+    .pr-card.featured {
+      border-color: #00C853;
+      box-shadow: 0 0 30px rgba(0,200,83,.3);
+      transform: scale(1.05);
+    }
+    .pr-card.featured:hover {
+      transform: translateY(-12px) scale(1.08);
+    }
+
+    .pr-badge {
+      position: absolute;
+      top: -12px;
+      right: 24px;
+      background: #00C853;
+      color: #080c0a;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 14px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 4px 12px rgba(0,200,83,.4);
+      animation: badgePulse 2s infinite;
+    }
+    @keyframes badgePulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+
+    .pr-card-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+    .pr-card-icon.basic { background: rgba(0,200,83,.1); }
+    .pr-card-icon.pro { background: rgba(212,175,91,.12); }
+    .pr-card-icon.adv { background: rgba(160,100,255,.12); }
+
+    .pr-tier {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .pr-tier.basic { color: #00C853; }
+    .pr-tier.pro { color: #d4af5b; }
+    .pr-tier.adv { color: #a064ff; }
+
+    .pr-features {
+      list-style: none;
+      margin: 1.5rem 0;
+    }
+    .pr-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+      font-size: 15px;
+      line-height: 1.4;
+    }
+    .pr-feat-check {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .pr-feat-check.basic { background: rgba(0,200,83,.15); border: 1px solid #00C853; }
+    .pr-feat-check.pro { background: rgba(212,175,91,.15); border: 1px solid #d4af5b; }
+    .pr-feat-check.adv { background: rgba(160,100,255,.15); border: 1px solid #a064ff; }
+
+    .pr-price-wrap {
+      margin-top: 2rem;
+      text-align: center;
+    }
+    .pr-price {
+      font-size: 2.75rem;
+      font-weight: 800;
+      font-family: 'Syne', sans-serif;
+      line-height: 1;
+    }
+    .pr-price-free {
+      font-size: 2.75rem;
+      font-weight: 800;
+      color: #00C853;
+    }
+    .pr-price-period {
+      font-size: 13px;
+      color: #8aab96;
+      margin-top: 4px;
+    }
+
+    .pr-btn {
+      width: 100%;
+      margin-top: 2rem;
+      padding: 16px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: all 0.3s;
+    }
+    .pr-btn.basic {
+      background: #111916;
+      color: #e2ece6;
+      border: 1px solid #00C853;
+    }
+    .pr-btn.pro, .pr-btn.adv {
+      background: #00C853;
+      color: #080c0a;
+    }
+    .pr-btn:hover {
+      transform: scale(1.03);
+    }
+
+    /* Slider navigation */
+    .slider-nav {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 2rem;
+    }
+    .slider-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #4a7a5a;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .slider-dot.active {
+      background: #00C853;
+      transform: scale(1.4);
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #080c0a; }
+    ::-webkit-scrollbar-thumb { background: rgba(0,200,83,.3); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 py-4 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-2.5 no-underline">
+      <div class="w-7 h-7 rounded-sm bg-[#00C853] flex items-center justify-center">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 12 L8 4 L14 12" stroke="#080c0a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 12 L8 7 L11 12" stroke="#080c0a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/></svg>
+      </div>
+      <span class="font-display font-800 text-white text-lg tracking-tight">ՄարդՌիսկ <span class="text-[#00C853]">Ակադեմիա</span></span>
+    </a>
+
+    <ul class="hidden md:flex items-center gap-8 list-none font-body text-sm text-[#8aab96]">
+      <li><a href="index.html" class="hover:text-white transition-colors" data-i18n="lesson_nav_home">Հիմնական էջ</a></li>
+      <li><a href="#how-to-use" class="hover:text-white transition-colors" data-i18n="lesson_nav_how">Ինչպես օգտագործել</a></li>
+      <li><a href="#commands-list" class="hover:text-white transition-colors" data-i18n="lesson_nav_all">Բոլոր հրամանները</a></li>
+      <li><a href="#examples" class="hover:text-white transition-colors" data-i18n="lesson_nav_examples">Օրինակներ</a></li>
+      <li><a href="#pricing" class="hover:text-white transition-colors" data-i18n="lesson_nav_pricing">Փաթեթներ</a></li>
+    </ul>
+
+    <!-- Language switcher -->
+    <div class="hidden md:flex items-center gap-0.5 text-[10px] font-mono border border-[rgba(0,200,83,.25)] rounded px-0.5 py-0.5 mr-2">
+      <button data-lang="hy" class="lang-btn px-1.5 py-0.5 rounded hover:bg-white/5 active">HY</button>
+      <button data-lang="en" class="lang-btn px-1.5 py-0.5 rounded hover:bg-white/5">EN</button>
+      <button data-lang="ru" class="lang-btn px-1.5 py-0.5 rounded hover:bg-white/5">RU</button>
+    </div>
+
+    <a href="https://ai.mardriskai.online" target="_blank" class="btn-primary text-sm hidden sm:inline-flex" data-i18n="nav_open_app">
+      Բացել MardRisk 1.1
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+
+    <!-- Mobile menu -->
+    <details class="md:hidden relative">
+      <summary class="list-none cursor-pointer p-2 border border-[rgba(0,200,83,.2)] rounded text-[#00C853]">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </summary>
+      <div class="absolute right-0 top-12 w-56 bg-[#0d1210] border border-[rgba(0,200,83,.18)] rounded p-4 flex flex-col gap-3 text-sm font-body text-[#8aab96] z-50">
+        <a href="index.html" class="hover:text-white transition-colors" data-i18n="lesson_nav_home">Հիմնական էջ</a>
+        <a href="#how-to-use" class="hover:text-white transition-colors" data-i18n="lesson_nav_how">Ինչպես օգտագործել</a>
+        <a href="#commands-list" class="hover:text-white transition-colors" data-i18n="lesson_nav_all">Բոլոր հրամանները</a>
+        <a href="#examples" class="hover:text-white transition-colors" data-i18n="lesson_nav_examples">Օրինակներ</a>
+        <a href="#pricing" class="hover:text-white transition-colors" data-i18n="lesson_nav_pricing">Փաթեթներ</a>
+        <div class="flex items-center gap-1 text-[10px] font-mono border border-[rgba(0,200,83,.25)] rounded px-1 py-1 mt-1">
+          <button data-lang="hy" class="lang-btn flex-1 px-1 py-0.5 rounded hover:bg-white/5 active">HY</button>
+          <button data-lang="en" class="lang-btn flex-1 px-1 py-0.5 rounded hover:bg-white/5">EN</button>
+          <button data-lang="ru" class="lang-btn flex-1 px-1 py-0.5 rounded hover:bg-white/5">RU</button>
+        </div>
+        <a href="https://ai.mardriskai.online" target="_blank" class="btn-primary text-xs mt-1 justify-center" data-i18n="nav_open_app">Բացել MardRisk 1.1</a>
+      </div>
+    </details>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="relative min-h-[85vh] flex items-center overflow-hidden px-6 lg:px-10 bg-[#080c0a]">
+  <div class="hero-blob"></div>
+  <div class="hero-blob-2"></div>
+
+  <div class="max-w-7xl mx-auto w-full relative z-10 pt-16 pb-12 grid lg:grid-cols-2 gap-16 items-center">
+    <div class="fade-up">
+      <div class="inline-flex items-center gap-2 border border-[rgba(0,200,83,.25)] bg-[rgba(0,200,83,.07)] rounded-full px-4 py-1.5 mb-8">
+        <span class="w-1.5 h-1.5 rounded-full bg-[#00C853] animate-pulse"></span>
+        <span class="text-[#00C853] text-xs font-display font-600 tracking-widest uppercase" data-i18n="lesson01_badge">ԴԱՍ 01 — ՀՐԱՄԱՆՆԵՐ</span>
+      </div>
+
+      <h1 class="font-display font-800 text-4xl sm:text-5xl xl:text-[3.5rem] leading-[1.08] tracking-tight mb-6">
+        <span class="gradient-text">Սովորեք հրամայել</span><br/>
+        <span class="text-white">Ձեր ֆինանսական ապագան</span>
+      </h1>
+
+      <p class="font-body text-[#8aab96] text-xl leading-relaxed max-w-xl mb-10">
+        Ամբողջական ուղեցույց՝ թե ինչպես օգտագործել ՄարդՌիսկի ԱԻ չաթը և բոլոր հրամանները։<br>
+        Ակնթարթային վերլուծություն, ռիսկի գնահատում և անհատական խորհուրդներ մեկ հրամանով։
+      </p>
+
+      <a href="#commands-list" class="btn-primary text-lg px-8 py-4">
+        Սկսել դասը
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+
+    <!-- Right side visual -->
+    <div class="fade-up hidden lg:flex justify-center" style="transition-delay:.3s">
+      <div class="command-box max-w-sm text-center">
+        <div class="flex justify-between text-xs mb-3 text-[#4a7a5a]">
+          <div>ՄարդՌիսկ ԱԻ • Ուղիղ</div>
+          <div class="flex items-center gap-1">
+            <div class="w-2 h-2 bg-[#00C853] rounded-full animate-pulse"></div>
+          </div>
+        </div>
+        <div class="mb-6 text-left">
+          <span class="text-[#00C853]">></span> <span class="text-white">/RiskScore</span><br>
+          <span class="text-[#a3c4b0] text-sm mt-2 block">Եկամուտ՝ 150000 դրամ<br>Խնայողություն՝ 80000 դրամ<br>Պարտք՝ 45000 դրամ</span>
+        </div>
+        <div class="text-[#00C853] font-bold text-3xl">82 <span class="text-sm font-normal">/100</span></div>
+        <p class="text-[#8aab96] text-xs mt-1">Ձեր ռիսկի միավորն այս պահին</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW TO USE -->
+<section id="how-to-use" class="max-w-7xl mx-auto px-6 lg:px-10 py-24">
+  <div class="text-center mb-16 fade-up">
+    <p class="text-[#00C853] font-display text-xs tracking-[.22em] uppercase mb-3">ՔԱՅԼ ԱՌ ՔԱՅԼ</p>
+    <h2 class="font-display font-700 text-4xl text-white">Ինչպես օգտագործել ՄարդՌիսկի ԱԻ հավելվածը</h2>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-8">
+    <div class="feature-card fade-up">
+      <div class="flex items-center justify-center w-12 h-12 bg-[#00C853]/10 rounded-2xl mb-6 text-3xl">1</div>
+      <h3 class="font-display font-600 text-2xl mb-3">1. Մուտք գործեք չաթ</h3>
+      <p class="text-[#6a8a76]">Բացեք ՄարդՌիսկի հավելվածը կամ վեբ-չաթը։ Դուք կտեսնեք մուտքի դաշտ, որտեղ կարող եք գրել հրամաններ։</p>
+    </div>
+    <div class="feature-card fade-up" style="transition-delay:100ms">
+      <div class="flex items-center justify-center w-12 h-12 bg-[#00C853]/10 rounded-2xl mb-6 text-3xl">2</div>
+      <h3 class="font-display font-600 text-2xl mb-3">2. Գրեք հրաման</h3>
+      <p class="text-[#6a8a76]">Սկսեք հրամանը «/» նշանով (օրինակ՝ <span class="command-code">/analyze BTC</span> կամ <span class="command-code">/RiskScore</span>)։</p>
+    </div>
+    <div class="feature-card fade-up" style="transition-delay:200ms">
+      <div class="flex items-center justify-center w-12 h-12 bg-[#00C853]/10 rounded-2xl mb-6 text-3xl">3</div>
+      <h3 class="font-display font-600 text-2xl mb-3">3. Ստացեք ակնթարթային պատասխան</h3>
+      <p class="text-[#6a8a76]">ԱԻ-ն կվերլուծի ձեր հարցումը, կցուցադրի գրաֆիկներ, կանխատեսումներ և գործնական խորհուրդներ։</p>
+    </div>
+  </div>
+
+  <div class="mt-16 text-center text-[#4a7a5a] text-sm">
+    Չաթը աշխատում է 24/7 • Անվտանգ • Ձեր տվյալները գաղտնի են պահվում
+  </div>
+</section>
+
+<!-- ALL COMMANDS -->
+<section id="commands-list" class="px-6 lg:px-10 py-24 bg-[#0a0f0c]">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-16 fade-up">
+      <p class="text-[#00C853] font-display text-xs tracking-[.22em] uppercase mb-3">ՀՐԱՄԱՆՆԵՐԻ ՑԱՆԿ</p>
+      <h2 class="font-display font-700 text-4xl text-white">Բոլոր հասանելի հրամանները</h2>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Command 1 -->
+      <div class="feature-card fade-up">
+        <div class="inline-block px-5 py-2 bg-[#00C853] text-black font-display font-bold text-sm rounded mb-6">/analyze ԱԿՏԻՎ</div>
+        <h3 class="font-display font-semibold text-2xl mb-4">Շուկայի ինտելեկտ</h3>
+        <p class="text-[#6a8a76] mb-6">Ուղիղ գների վերլուծություն, տատանումներ, նորությունների ազդեցություն, կանխատեսում և գործողությունների պլան։</p>
+        <div class="command-box text-sm mb-6">
+          Օրինակներ:<br>
+          <span class="text-white">/analyze BTC/USD</span><br>
+          <span class="text-white">/analyze AMD/USD</span><br>
+          <span class="text-white">/analyze AAPL</span>
+        </div>
+        <p class="text-xs text-[#4a7a5a]">Ցուցադրում է ինտերակտիվ գրաֆիկ և 7-օրյա կանխատեսում</p>
+      </div>
+
+      <!-- Command 2 -->
+      <div class="feature-card fade-up">
+        <div class="inline-block px-5 py-2 bg-[#00C853] text-black font-display font-bold text-sm rounded mb-6">/RiskScore</div>
+        <h3 class="font-display font-semibold text-2xl mb-4">Անհատական ռիսկի գնահատում</h3>
+        <p class="text-[#6a8a76] mb-6">Մուտքագրեք ձեր ֆինանսական տվյալները և ստացեք 1-100 միավոր + 30/60/90 օրյա պլան։</p>
+        <div class="command-box text-sm mb-6">
+          Օրինակ:<br>
+          <span class="text-white">/RiskScore</span><br>
+          Եկամուտ՝ 120000 դրամ<br>
+          Խնայողություն՝ 45000 դրամ<br>
+          Պարտք՝ 30000 դրամ
+        </div>
+        <p class="text-xs text-[#4a7a5a]">Ակնթարթորեն հաշվարկում է ձեր ֆինանսական կայունությունը</p>
+      </div>
+
+      <!-- Command 3 -->
+      <div class="feature-card fade-up">
+        <div class="inline-block px-5 py-2 bg-[#00C853] text-black font-display font-bold text-sm rounded mb-6">/խորհուրդ կամ /advice</div>
+        <h3 class="font-display font-semibold text-2xl mb-4">Անհատական խորհուրդ</h3>
+        <p class="text-[#6a8a76] mb-6">Պարտքերի մարում, բյուջեի օպտիմիզացիա, ծախսերի վերլուծություն և հստակ քայլ առ քայլ պլան։</p>
+        <div class="command-box text-sm mb-6">
+          Օրինակներ:<br>
+          <span class="text-white">/խորհուրդ 1500 դրամ պարտք</span><br>
+          <span class="text-white">/advice ինչպե՞ս խնայել ամսական 30000 դրամ</span>
+        </div>
+        <p class="text-xs text-[#4a7a5a]">Հասկանում է հայերեն և տալիս է գործնական, անհատականացված պատասխաններ</p>
+      </div>
+
+      <!-- General questions -->
+      <div class="feature-card fade-up col-span-1 md:col-span-3 lg:col-span-1">
+        <div class="inline-flex items-center gap-2 px-5 py-2 bg-[#111916] border border-[#00C853]/30 rounded mb-6 text-[#00C853] text-sm">
+          <span class="font-medium">Առանց հրամանի</span>
+        </div>
+        <h3 class="font-display font-semibold text-2xl mb-4">Ցանկացած ֆինանսական հարց</h3>
+        <p class="text-[#6a8a76]">Պարզապես գրեք ձեր հարցը — ԱԻ-ն կպատասխանի։</p>
+        <ul class="text-sm text-[#8aab96] mt-6 space-y-3">
+          <li class="flex gap-3"><span class="text-[#00C853]">•</span> Ինչպիսի՞ն է այսօրվա AMD/USD դրույքը;</li>
+          <li class="flex gap-3"><span class="text-[#00C853]">•</span> Ո՞րն է լավագույն ռազմավարությունը իմ պորտֆոլիոյի համար;</li>
+          <li class="flex gap-3"><span class="text-[#00C853]">•</span> Վերլուծիր իմ բյուջեն;</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXAMPLES & EXPERT MODE -->
+<section id="examples" class="max-w-7xl mx-auto px-6 lg:px-10 py-24">
+  <div class="grid lg:grid-cols-2 gap-16 items-center">
+    <div class="fade-up">
+      <h2 class="font-display font-700 text-3xl mb-8">Էքսպերտ ռեժիմ և առաջադեմ հնարավորություններ</h2>
+      <div class="space-y-8">
+        <div class="flex gap-6">
+          <div class="text-5xl font-display font-bold text-[#00C853]">1000+</div>
+          <div>
+            <h4 class="font-display font-semibold text-xl">Մոնտե Կարլոյի սցենարներ</h4>
+            <p class="text-[#6a8a76]">ԱԻ-ն գործարկում է հազարավոր շուկայական սիմուլացիաներ նախքան ձեր որոշումը։</p>
+          </div>
+        </div>
+        <div class="flex gap-6">
+          <div class="text-5xl font-display font-bold text-[#00C853]">📈</div>
+          <div>
+            <h4 class="font-display font-semibold text-xl">Ինտերակտիվ գրաֆիկներ</h4>
+            <p class="text-[#6a8a76]">Չաթում անմիջապես երևում են գրաֆիկներ BTC, AMD, S&amp;P500 և այլ ակտիվների համար։</p>
+          </div>
+        </div>
+        <div class="flex gap-6">
+          <div class="text-5xl font-display font-bold text-[#00C853]">🔒</div>
+          <div>
+            <h4 class="font-display font-semibold text-xl">Գաղտնիություն և անվտանգություն</h4>
+            <p class="text-[#6a8a76]">Բոլոր տվյալները մշակվում են մասնավոր ռեժիմով։</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-[#0d1210] border border-[#00C853]/20 rounded-3xl p-8 fade-up">
+      <h3 class="font-display text-xl mb-6">Փորձեք հիմա (օրինակներ)</h3>
+      <div class="space-y-4 text-sm">
+        <div class="flex items-center gap-3 bg-[#111916] p-4 rounded-2xl">
+          <span class="text-[#00C853] font-mono">/analyze</span>
+          <span class="flex-1">TSLA</span>
+        </div>
+        <div class="flex items-center gap-3 bg-[#111916] p-4 rounded-2xl">
+          <span class="text-[#00C853] font-mono">/RiskScore</span>
+          <span class="flex-1">Եկամուտ 250000 դրամ, պարտք 120000 դրամ</span>
+        </div>
+        <div class="flex items-center gap-3 bg-[#111916] p-4 rounded-2xl">
+          <span class="text-[#00C853] font-mono">/խորհուրդ</span>
+          <span class="flex-1">Ինչպե՞ս մարեմ 50000 դրամ պարտքը 3 ամսում</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING + SLIDER SECTION -->
+<section id="pricing" class="px-6 lg:px-10 py-24 bg-[#0a0f0c]">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-16 fade-up">
+      <p class="text-[#00C853] font-display text-xs tracking-[.22em] uppercase mb-3">ԸՆՏՐԵՔ ՁԵՐ ՄԱԿԱՐԴԱԿԸ</p>
+      <h2 class="font-display font-700 text-4xl text-white mb-4">Փաթեթներ և առավելություններ</h2>
+      <p class="text-[#8aab96] max-w-md mx-auto">Անվճարից մինչև էքսպերտ մակարդակ՝ ձեր ֆինանսական աճի համար</p>
+    </div>
+
+    <!-- SLIDER CONTAINER -->
+    <div class="pr-cards" id="pricing-slider">
+      <!-- BASIC -->
+      <div class="pr-card">
+        <div class="pr-card-icon basic">
+          <svg viewBox="0 0 30 30" fill="none" stroke-linecap="round">
+            <circle cx="15" cy="15" r="11" stroke="rgba(0,200,83,.5)" stroke-width="1.5"/>
+            <path d="M10 15l3 3 7-7" stroke="rgba(0,200,83,.9)" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="pr-tier basic">Անվճար</div>
+        <div class="pr-card-name text-2xl font-display font-semibold mt-1">Basic</div>
+        <div class="pr-card-tag text-[#8aab96] text-sm mt-3">Ֆինանսական գրագիտության և արհեստական բանականության հիմնական օգնական՝ նախատեսված սկսնակների, ուսանողների և այն անձանց համար, ովքեր ցանկանում են բարձրացնել իրենց ֆինանսական գիտելիքը</div>
+        
+        <ul class="pr-features mt-8">
+          <li>
+            <div class="pr-feat-check basic"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="2,6 5,9 10,3"/></svg></div>
+            Արհեստական բանականության չաթ-բոտ՝ հիմնական մակարդակի ֆինանսական հարցերի պատասխանների և տերմինների բացատրության համար
+          </li>
+          <li>
+            <div class="pr-feat-check basic"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="2,6 5,9 10,3"/></svg></div>
+            Ուղիղ տվյալների հասանելիություն՝ ընթացիկ գների, արժութային փոխարժեքների և կրիպտոարժույթների դիտման համար
+          </li>
+          <li>
+            <div class="pr-feat-check basic" style="background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.08);">
+              <svg viewBox="0 0 12 12" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="2"><line x1="2" y1="6" x2="10" y2="6"/></svg>
+            </div>
+            <span style="opacity:.35;">Խորը վերլուծական գործիքներ ընդգրկված չեն</span>
+          </li>
+          <li>
+            <div class="pr-feat-check basic" style="background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.08);">
+              <svg viewBox="0 0 12 12" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="2"><line x1="2" y1="6" x2="10" y2="6"/></svg>
+            </div>
+            <span style="opacity:.35;">Բարդ հաշվարկների հնարավորություն ընդգրկված չէ</span>
+          </li>
+        </ul>
+
+        <div class="pr-price-wrap">
+          <div class="pr-price-free">Անվճար</div>
+          <div class="pr-price-period">Ընդմիշտ անվճար</div>
+        </div>
+        <button onclick="window.location.href='https://ai.mardriskai.online'" class="pr-btn basic">Անվճար սկսել</button>
+      </div>
+
+      <!-- PRO -->
+      <div class="pr-card featured">
+        <div class="pr-badge">
+          <div class="pr-badge-dot w-2 h-2 bg-[#080c0a] rounded-full animate-pulse"></div>
+          ԱՄԵՆԱՏԱՐԱԾՎԱԾ
+        </div>
+        <div class="pr-card-icon pro">
+          <svg viewBox="0 0 30 30" fill="none" stroke-linecap="round">
+            <rect x="4" y="16" width="4" height="10" rx="1.5" fill="rgba(212,175,91,.3)" stroke="#d4af5b" stroke-width="1.2"/>
+            <rect x="10" y="10" width="4" height="16" rx="1.5" fill="rgba(212,175,91,.3)" stroke="#d4af5b" stroke-width="1.2"/>
+            <rect x="16" y="5" width="4" height="21" rx="1.5" fill="rgba(212,175,91,.3)" stroke="#d4af5b" stroke-width="1.2"/>
+            <rect x="22" y="8" width="4" height="18" rx="1.5" fill="rgba(212,175,91,.3)" stroke="#d4af5b" stroke-width="1.2"/>
+          </svg>
+        </div>
+        <div class="pr-tier pro">Պրոֆեսիոնալ</div>
+        <div class="pr-card-name text-2xl font-display font-semibold mt-1">Pro</div>
+        <div class="pr-card-tag text-[#8aab96] text-sm mt-3">Պրոֆեսիոնալ վերլուծություն և կանխատեսումներ՝ առևտրականների, ֆինանսական վերլուծաբանների և փոքր բիզնեսների համար</div>
+        
+        <ul class="pr-features mt-8">
+          <li>
+            <div class="pr-feat-check pro"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="2,6 5,9 10,3"/></svg></div>
+            Basic փաթեթի բոլոր հնարավորությունները ներառված են
+          </li>
+          <li>
+            <div class="pr-feat-check pro"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="2,6 5,9 10,3"/></svg></div>
+            Ֆինանսական տվյալների վերլուծություն և Ռիսկ-գնահատականի հաշվարկ
+          </li>
+          <li>
+            <div class="pr-feat-check pro"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="2,6 5,9 10,3"/></svg></div>
+            Կանխատեսումներ՝ կարճաժամկետ և երկարաժամկետ ֆինանսական կանխատեսումների մոդելավորում
+          </li>
+          <li>
+            <div class="pr-feat-check pro"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="2,6 5,9 10,3"/></svg></div>
+            Համաշխարհային շուկաների վերլուծություն և տրենդերի հետևում
+          </li>
+          <li>
+            <div class="pr-feat-check pro"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="2,6 5,9 10,3"/></svg></div>
+            Վիզուալիզացիա՝ գրաֆիկներ և դիագրամներ անմիջապես չաթում
+          </li>
+          <li>
+            <div class="pr-feat-check pro"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="2,6 5,9 10,3"/></svg></div>
+            Մեծ տվյալների մշակում և բարդ աղյուսակների հետ աշխատանք
+          </li>
+        </ul>
+
+        <div class="pr-price-wrap">
+          <div class="pr-price pro">
+            <span class="pr-price-currency">$</span>
+            <span class="price-number">20</span>
+          </div>
+          <div class="pr-price-period">ամսական</div>
+        </div>
+        <button onclick="window.location.href='https://ai.mardriskai.online'" class="pr-btn pro">Ընտրել Pro</button>
+      </div>
+
+      <!-- ADVANCED -->
+      <div class="pr-card">
+        <div class="pr-card-icon adv">
+          <svg viewBox="0 0 30 30" fill="none" stroke-linecap="round">
+            <circle cx="15" cy="15" r="10" stroke="rgba(160,100,255,.5)" stroke-width="1.5" stroke-dasharray="3 3"/>
+            <path d="M10 15l2 2 4-6 3 3" stroke="rgba(160,100,255,.9)" stroke-width="1.8"/>
+            <circle cx="15" cy="15" r="3" fill="rgba(160,100,255,.2)" stroke="rgba(160,100,255,.8)" stroke-width="1.2"/>
+            <circle cx="15" cy="15" r="1.2" fill="rgba(160,100,255,.9)"/>
+          </svg>
+        </div>
+        <div class="pr-tier adv">Էքսպերտ</div>
+        <div class="pr-card-name text-2xl font-display font-semibold mt-1">Advanced</div>
+        <div class="pr-card-tag text-[#8aab96] text-sm mt-3">Ամբողջական գերազանցություն և փորձագիտական մտածողություն՝ խոշոր ներդրողների և հեջ-ֆոնդերի համար</div>
+        
+        <ul class="pr-features mt-8">
+          <li>
+            <div class="pr-feat-check adv"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="2,6 5,9 10,3"/></svg></div>
+            Pro փաթեթի բոլոր հնարավորությունները ներառված են
+          </li>
+          <li>
+            <div class="pr-feat-check adv"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="2,6 5,9 10,3"/></svg></div>
+            Խորը մտածողություն՝ 1000 ներքին սիմուլյացիայով
+          </li>
+          <li>
+            <div class="pr-feat-check adv"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="2,6 5,9 10,3"/></svg></div>
+            Առաջնային ենթակառուցվածք՝ բարձր հաշվողական առաջնահերթությամբ
+          </li>
+        </ul>
+
+        <div class="pr-usp bg-[#111916] rounded-2xl p-5 mt-8">
+          <div class="flex gap-3">
+            <div class="text-[#a064ff] text-4xl">🚀</div>
+            <div class="text-xs leading-tight">
+              <strong class="text-[#a064ff]">Եզակի առավելություն</strong><br>
+              ԱԻ-ն սիմուլացնում է խնդիրը 1000 ներքին մտքի շղթայով, ուղղում է սեփական սխալները և տալիս ամենաճշգրիտ պատասխանը
+            </div>
+          </div>
+        </div>
+
+        <div class="pr-price-wrap">
+          <div class="pr-price adv">
+            <span class="pr-price-currency" style="color:rgba(160,100,255,.7)">$</span>
+            <span class="price-number">80</span>
+          </div>
+          <div class="pr-price-period">ամսական</div>
+        </div>
+        <button onclick="window.location.href='https://ai.mardriskai.online'" class="pr-btn adv">Ընտրել Advanced</button>
+      </div>
+    </div>
+
+    <!-- Slider dots -->
+    <div class="slider-nav" id="slider-dots">
+      <div class="slider-dot active" onclick="goToSlide(0)"></div>
+      <div class="slider-dot" onclick="goToSlide(1)"></div>
+      <div class="slider-dot" onclick="goToSlide(2)"></div>
+    </div>
+
+    <div class="pr-footer-note text-center text-[#4a7a5a] text-xs mt-12">
+      Բոլոր գները ԱՄՆ դոլարով · Ամսական վճարում · Ցանկացած պահի չեղարկելի · Անվճար փորձարկում Pro-ի համար
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="px-6 lg:px-10 py-16 bg-gradient-to-r from-[#111916] to-[#0d1210] border-t border-b border-[#00C853]/30">
+  <div class="max-w-4xl mx-auto text-center">
+    <h2 class="font-display font-700 text-3xl text-white mb-6">Պատրա՞ստ եք սկսել ձեր ֆինանսական տեղափոխությունը</h2>
+    <p class="text-[#8aab96] mb-8">Միացեք վայթլիստին և առաջինը ստացեք մուտք դեպի ամբողջական հավելված։</p>
+    <a href="https://ai.mardriskai.online" target="_blank" class="btn-primary text-xl px-12 py-6" data-i18n="nav_open_app">
+      Միացեք վայթլիստին և սկսեք
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="border-t border-[rgba(0,200,83,.1)] bg-[#080c0a] py-12">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 text-center text-[#2a4a3a] text-xs">
+    <p>© 2025 ՄարդՌիսկ Ակադեմիա • Դաս 01 — Հրամանների ուղեցույց + Փաթեթներ</p>
+    <a href="index.html" class="hover:text-[#00C853] mt-4 inline-block">← Վերադառնալ հիմնական էջ</a>
+    <span class="mx-2">•</span>
+    <a href="lesson1.html" class="hover:text-[#00C853]">Դաս 02 — Հիմնական ֆունկցիաներ</a>
+    <span class="mx-2">•</span>
+    <a href="lesson2.html" class="hover:text-[#00C853]">Դաս 03 — Սիմուլյացիաներ</a>
+  </div>
+</footer>
+
+<script>
+  // Fade-up animation
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // Simple slider functionality for pricing cards
+  let currentSlide = 0;
+  const slider = document.getElementById('pricing-slider');
+  const dots = document.querySelectorAll('.slider-dot');
+
+  function goToSlide(index) {
+    currentSlide = index;
+    const cardWidth = slider.children[0].offsetWidth + 24; // gap 1.5rem = 24px
+    slider.scrollTo({
+      left: cardWidth * index,
+      behavior: 'smooth'
+    });
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('active', i === index);
+    });
+  }
+
+  // Auto-detect current slide on scroll
+  slider.addEventListener('scroll', () => {
+    const scrollPos = slider.scrollLeft;
+    const cardWidth = slider.children[0].offsetWidth + 24;
+    currentSlide = Math.round(scrollPos / cardWidth);
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('active', i === currentSlide);
+    });
+  });
+
+  // Auto-play slider on mobile
+  let autoPlay;
+  function startAutoPlay() {
+    if (window.innerWidth < 768) {
+      autoPlay = setInterval(() => {
+        currentSlide = (currentSlide + 1) % 3;
+        goToSlide(currentSlide);
+      }, 4500);
+    }
+  }
+  window.addEventListener('load', startAutoPlay);
+  window.addEventListener('resize', () => {
+    clearInterval(autoPlay);
+    startAutoPlay();
+  });
+
+  // ==================== 3-LANGUAGE I18N (lesson 01) ====================
+  const translations = {
+    hy: {
+      nav_open_app: "Բացել MardRisk 1.1",
+      lesson_nav_home: "Հիմնական էջ",
+      lesson_nav_how: "Ինչպես օգտագործել",
+      lesson_nav_all: "Բոլոր հրամանները",
+      lesson_nav_examples: "Օրինակներ",
+      lesson_nav_pricing: "Փաթեթներ",
+      lesson01_badge: "ԴԱՍ 01 — ՀՐԱՄԱՆՆԵՐ"
+    },
+    en: {
+      nav_open_app: "Open MardRisk 1.1",
+      lesson_nav_home: "Home",
+      lesson_nav_how: "How to use",
+      lesson_nav_all: "All commands",
+      lesson_nav_examples: "Examples",
+      lesson_nav_pricing: "Pricing",
+      lesson01_badge: "LESSON 01 — COMMANDS"
+    },
+    ru: {
+      nav_open_app: "Открыть MardRisk 1.1",
+      lesson_nav_home: "Главная",
+      lesson_nav_how: "Как использовать",
+      lesson_nav_all: "Все команды",
+      lesson_nav_examples: "Примеры",
+      lesson_nav_pricing: "Тарифы",
+      lesson01_badge: "УРОК 01 — КОМАНДЫ"
+    }
+  };
+
+  function setLanguage(lang) {
+    localStorage.setItem('lang', lang);
+    document.documentElement.lang = (lang === 'hy' ? 'hy' : lang === 'en' ? 'en' : 'ru');
+
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (translations[lang] && translations[lang][key]) {
+        el.textContent = translations[lang][key];
+      }
+    });
+
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      const active = btn.dataset.lang === lang;
+      btn.classList.toggle('bg-[#00C853]', active);
+      btn.classList.toggle('text-black', active);
+      btn.classList.toggle('font-semibold', active);
+    });
+  }
+
+  function initLanguage() {
+    const saved = localStorage.getItem('lang') || 'hy';
+    setLanguage(saved);
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+    });
+  }
+  initLanguage();
+
+  console.log('%c✅ lesson01 — 3 languages + links updated', 'color:#00C853; font-family:monospace; font-size:12px;');
+</script>
+
+</body>
+</html>

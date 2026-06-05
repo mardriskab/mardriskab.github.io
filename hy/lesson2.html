@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ՄարդՌիսկ Ակադեմիա — Սիմուլյացիաներ և սթրես-թեստեր (Դաս 03)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='2' fill='%2300C853'/%3E%3Cpath d='M2 12 L8 4 L14 12' stroke='%23080c0a' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M5 12 L8 7 L11 12' stroke='%23080c0a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' opacity='.5'/%3E%3C/svg%3E" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            emerald: { accent: '#00C853', dim: '#00a844', glow: '#00ff6a22' },
+            dark: { 900: '#080c0a', 800: '#0d1210', 700: '#111916', 600: '#182018', 500: '#1e2a1e' },
+          },
+          fontFamily: {
+            display: ['Syne', 'sans-serif'],
+            body: ['DM Sans', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background-color: #080c0a;
+      color: #e2ece6;
+      font-family: 'DM Sans', sans-serif;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,200,83,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,83,.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .hero-blob {
+      position: absolute; width: 680px; height: 680px;
+      background: radial-gradient(circle, rgba(0,200,83,.18) 0%, transparent 70%);
+      border-radius: 50%; top: -180px; right: -140px;
+      filter: blur(60px); pointer-events: none;
+      animation: pulse-blob 7s ease-in-out infinite;
+    }
+    .hero-blob-2 {
+      position: absolute; width: 420px; height: 420px;
+      background: radial-gradient(circle, rgba(0,200,83,.09) 0%, transparent 70%);
+      border-radius: 50%; bottom: -80px; left: -100px;
+      filter: blur(50px); pointer-events: none;
+      animation: pulse-blob 9s ease-in-out infinite reverse;
+    }
+    @keyframes pulse-blob { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.12);opacity:.75} }
+    nav {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(8,12,10,.85);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(0,200,83,.12);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #ffffff 30%, #00C853 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: #00C853; color: #080c0a; font-family: 'Syne', sans-serif; font-weight: 700;
+      letter-spacing: .03em; padding: .85rem 2rem; border-radius: 2px; border: none; cursor: pointer;
+      transition: all .25s; box-shadow: 0 0 24px rgba(0,200,83,.35); text-decoration: none;
+    }
+    .btn-primary:hover { background: #00e65d; box-shadow: 0 0 40px rgba(0,200,83,.55); transform: translateY(-2px); }
+    .feature-card {
+      background: #0d1210; border: 1px solid rgba(0,200,83,.13); border-radius: 4px; padding: 1.75rem;
+      transition: all .3s; position: relative; overflow: hidden;
+    }
+    .feature-card:hover { border-color: rgba(0,200,83,.4); box-shadow: 0 0 32px rgba(0,200,83,.12); transform: translateY(-4px); }
+    .fade-up { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+    .scenario-bar { height: 6px; background: #00C853; border-radius: 999px; transition: width 1.2s cubic-bezier(0.23,1,0.32,1); }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #080c0a; }
+    ::-webkit-scrollbar-thumb { background: rgba(0,200,83,.3); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 py-4 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-2.5 no-underline">
+      <div class="w-7 h-7 rounded-sm bg-[#00C853] flex items-center justify-center">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 12 L8 4 L14 12" stroke="#080c0a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 12 L8 7 L11 12" stroke="#080c0a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/></svg>
+      </div>
+      <span class="font-display font-800 text-white text-lg tracking-tight">ՄարդՌիսկ <span class="text-[#00C853]">Ակադեմիա</span></span>
+    </a>
+
+    <ul class="hidden md:flex items-center gap-8 list-none font-body text-sm text-[#8aab96]">
+      <li><a href="index.html" class="hover:text-white transition-colors" data-i18n="nav_home">Հիմնական էջ</a></li>
+      <li><a href="lesson.html" class="hover:text-white transition-colors" data-i18n="nav_lesson1">Դաս 01 — Հրամաններ</a></li>
+      <li><a href="lesson1.html" class="hover:text-white transition-colors" data-i18n="nav_lesson2">Դաս 02 — Հիմնական ֆունկցիաներ</a></li>
+      <li><a href="#how" class="hover:text-white transition-colors" data-i18n="nav_how">Ինչպես է աշխատում</a></li>
+      <li><a href="#demo" class="hover:text-white transition-colors" data-i18n="nav_demo">Դեմո սիմուլյացիա</a></li>
+    </ul>
+
+    <!-- Language switcher -->
+    <div class="hidden md:flex items-center gap-1 text-[10px] font-mono border border-[rgba(0,200,83,.25)] rounded px-1 py-0.5 mr-2 lang-switch">
+      <a href="/hy/lesson2.html" class="hover:text-white px-1.5 py-0.5 rounded bg-[#00C853] text-black font-semibold">ՀՅ</a>
+      <a href="/en/lesson2.html" class="hover:text-white px-1.5 py-0.5 rounded">EN</a>
+      <a href="/ru/lesson2.html" class="hover:text-white px-1.5 py-0.5 rounded">RU</a>
+    </div>
+
+    <a href="https://ai.mardriskai.online" target="_blank" class="btn-primary text-sm hidden sm:inline-flex" data-i18n="nav_open_app">
+      Բացել MardRisk 1.1
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+
+    <!-- Mobile -->
+    <details class="md:hidden relative">
+      <summary class="list-none cursor-pointer p-2 border border-[rgba(0,200,83,.2)] rounded text-[#00C853]">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </summary>
+      <div class="absolute right-0 top-12 w-56 bg-[#0d1210] border border-[rgba(0,200,83,.18)] rounded p-4 flex flex-col gap-3 text-sm font-body text-[#8aab96] z-50">
+        <a href="index.html" class="hover:text-white transition-colors" data-i18n="nav_home">Հիմնական էջ</a>
+        <a href="lesson.html" class="hover:text-white transition-colors" data-i18n="nav_lesson1">Դաս 01 — Հրամաններ</a>
+        <a href="lesson1.html" class="hover:text-white transition-colors" data-i18n="nav_lesson2">Դաս 02 — Հիմնական ֆունկցիաներ</a>
+        <a href="#how" class="hover:text-white transition-colors" data-i18n="nav_how">Ինչպես է աշխատում</a>
+        <a href="#demo" class="hover:text-white transition-colors" data-i18n="nav_demo">Դեմո սիմուլյացիա</a>
+        <div class="flex items-center gap-1 text-[10px] font-mono border border-[rgba(0,200,83,.25)] rounded px-1 py-1 mt-1">
+          <a href="/hy/lesson2.html" class="flex-1 text-center hover:text-white px-1 py-0.5 rounded bg-[#00C853] text-black font-semibold">ՀՅ</a>
+          <a href="/en/lesson2.html" class="flex-1 text-center hover:text-white px-1 py-0.5 rounded">EN</a>
+          <a href="/ru/lesson2.html" class="flex-1 text-center hover:text-white px-1 py-0.5 rounded">RU</a>
+        </div>
+        <a href="https://ai.mardriskai.online" target="_blank" class="btn-primary text-xs mt-1 justify-center" data-i18n="nav_open_app">Բացել MardRisk 1.1</a>
+      </div>
+    </details>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="relative min-h-[82vh] flex items-center overflow-hidden px-6 lg:px-10 bg-[#080c0a]">
+  <div class="hero-blob"></div>
+  <div class="hero-blob-2"></div>
+
+  <div class="max-w-7xl mx-auto w-full relative z-10 pt-16 pb-12 grid lg:grid-cols-2 gap-16 items-center">
+    <div class="fade-up">
+      <div class="inline-flex items-center gap-2 border border-[rgba(0,200,83,.25)] bg-[rgba(0,200,83,.07)] rounded-full px-4 py-1.5 mb-8">
+        <span class="w-1.5 h-1.5 rounded-full bg-[#00C853] animate-pulse"></span>
+        <span class="text-[#00C853] text-xs font-display font-600 tracking-widest uppercase" data-i18n="l2_badge">ԴԱՍ 03 — ՍԻՄՈՒԼՅԱՑԻԱՆԵՐ ԵՎ ՍԹՐԵՍ-ԹԵՍՏԵՐ</span>
+      </div>
+
+      <h1 class="font-display font-800 text-4xl sm:text-5xl xl:text-[3.5rem] leading-[1.08] tracking-tight mb-6">
+        <span class="gradient-text" data-i18n="l2_title">1000 սցենար։</span><br/>
+        <span class="text-white" data-i18n="l2_subtitle">Մեկ ամենահաջողված պատասխանը</span>
+      </h1>
+
+      <p class="font-body text-[#8aab96] text-xl leading-relaxed max-w-xl mb-10" data-i18n="l2_desc">
+        Մուլտի-ագենտ համակարգը գործարկում է հազարավոր սթրես-թեստեր ցանկացած հարցի համար և գտնում է ամենաօպտիմալ ռազմավարությունը։ Հասանելի է միայն Advanced փաթեթում։
+      </p>
+
+      <div class="flex flex-wrap gap-3">
+        <a href="#demo" class="btn-primary" data-i18n="l2_cta_demo">Փորձել սիմուլյացիայի դեմոն</a>
+        <a href="https://ai.mardriskai.online" target="_blank" class="btn-outline" data-i18n="nav_open_app">Բացել MardRisk 1.1</a>
+      </div>
+      <p class="mt-4 text-xs text-[#4a7a5a]" data-i18n="l2_advanced_only">Միայն Advanced փաթեթում</p>
+    </div>
+
+    <div class="fade-up hidden lg:block" style="transition-delay:.2s">
+      <div class="bg-[#0d1210] border border-[#00C853]/20 rounded-3xl p-8">
+        <div class="uppercase text-[10px] tracking-[2px] text-[#00C853] mb-3">ԻՆՉՊԵՍ ԱՇԽԱՏՈՒՄ Է</div>
+        <div class="space-y-4 text-sm">
+          <div class="flex gap-3"><span class="font-mono text-[#00C853]">01</span> <span data-i18n="l2_step1">Օգտատերը ակտիվացնում է սիմուլյացիայի կոճակը չաթում ցանկացած հարցի համար</span></div>
+          <div class="flex gap-3"><span class="font-mono text-[#00C853]">02</span> <span data-i18n="l2_step2">Համակարգը գործարկում է 1000 անկախ սցենար (մուլտի-ագենտ)</span></div>
+          <div class="flex gap-3"><span class="font-mono text-[#00C853]">03</span> <span data-i18n="l2_step3">Հավաքագրվում և վերլուծվում են արդյունքները</span></div>
+          <div class="flex gap-3"><span class="font-mono text-[#00C853]">04</span> <span data-i18n="l2_step4">Մոդելը ներկայացնում է ամենահաջողված ռազմավարությունը + ռիսկերի քարտեզ</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="max-w-7xl mx-auto px-6 lg:px-10 py-20">
+  <div class="text-center mb-12 fade-up">
+    <p class="text-[#00C853] font-display text-xs tracking-[.22em] uppercase mb-3" data-i18n="l2_how_label">ՏԵԽՆՈԼՈԳԻԱ</p>
+    <h2 class="font-display font-700 text-3xl text-white" data-i18n="l2_how_title">Ինչպես է կատարվում սիմուլյացիան</h2>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-6">
+    <div class="feature-card fade-up">
+      <div class="text-4xl mb-4">🧠</div>
+      <h3 class="font-display font-semibold text-xl mb-3" data-i18n="l2_card1_title">Մուլտի-ագենտ համակարգ</h3>
+      <p class="text-[#8aab96] text-sm" data-i18n="l2_card1_desc">1000+ անկախ «ագենտներ» միաժամանակ մոդելավորում են տարբեր ապագա իրավիճակներ՝ տնտեսական ցնցումներ, տոկոսադրույքների փոփոխություններ, անձնական կյանքի իրադարձություններ և շուկայական տրենդներ։</p>
+    </div>
+    <div class="feature-card fade-up" style="transition-delay:80ms">
+      <div class="text-4xl mb-4">📊</div>
+      <h3 class="font-display font-semibold text-xl mb-3" data-i18n="l2_card2_title">Սթրես-թեստ ցանկացած հարցի համար</h3>
+      <p class="text-[#8aab96] text-sm" data-i18n="l2_card2_desc">Պարզապես գրեք ձեր հարցը և սեղմեք «Սիմուլյացիա» կոճակը։ Մոդելը ավտոմատ կերպով կկառուցի հազարավոր սցենարներ և կգտնի ամենակայուն և շահավետ ուղին։</p>
+    </div>
+    <div class="feature-card fade-up" style="transition-delay:160ms">
+      <div class="text-4xl mb-4">🎯</div>
+      <h3 class="font-display font-semibold text-xl mb-3" data-i18n="l2_card3_title">Ամենահաջողված պատասխանը</h3>
+      <p class="text-[#8aab96] text-sm" data-i18n="l2_card3_desc">1000 սցենարներից հետո համակարգը ընտրում է ամենաբարձր հավանականությամբ հաջողություն ունեցող ռազմավարությունը, ցույց է տալիս ռիսկերը և առաջարկում կոնկրետ քայլեր։</p>
+    </div>
+  </div>
+</section>
+
+<!-- EXAMPLE -->
+<section class="px-6 lg:px-10 py-20 bg-[#0a0f0c]">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <div class="fade-up">
+        <p class="text-[#00C853] font-display text-xs tracking-[.22em] uppercase mb-3" data-i18n="l2_ex_label">ՕՐԻՆԱԿ</p>
+        <h2 class="font-display font-700 text-3xl text-white leading-tight mb-6" data-i18n="l2_ex_title">«Ի՞նչ կլինի, եթե այսօր գնեմ բնակարան»</h2>
+        <div class="space-y-4 text-[#8aab96]">
+          <p data-i18n="l2_ex_p1">Օգտատերը հարցնում է և ակտիվացնում սիմուլյացիան։</p>
+          <p data-i18n="l2_ex_p2">Համակարգը գործարկում է 1000 սցենար՝ հաշվի առնելով տոկոսադրույքների աճը, գնաճը, անշարժ գույքի շուկայի անկումը, ձեր եկամուտների փոփոխությունը, վարկի մարման ժամկետները և այլն։</p>
+          <p data-i18n="l2_ex_p3">Արդյունքում դուք ստանում եք ոչ թե մեկ կարծիք, այլ ամենահավանական և ամենակայուն ֆինանսական ճանապարհը՝ հստակ թվերով և ռիսկերի մակարդակներով։</p>
+        </div>
+      </div>
+
+      <div class="bg-[#0d1210] border border-[#00C853]/20 rounded-3xl p-8 fade-up">
+        <div class="text-sm uppercase tracking-widest text-[#00C853] mb-4" data-i18n="l2_ex_result">ՍԻՄՈՒԼՅԱՑԻԱՅԻ ԱՐԴՅՈՒՆՔ (ՕՐԻՆԱԿ)</div>
+        <div class="space-y-5 text-sm">
+          <div>
+            <div class="flex justify-between mb-1"><span data-i18n="l2_ex_best">Ամենահաջողված սցենար</span> <span class="text-[#00C853]">68%</span></div>
+            <div class="scenario-bar w-[68%] bg-[#00C853]"></div>
+            <div class="text-xs text-[#4a7a5a] mt-1" data-i18n="l2_ex_best_desc">Գնել 2-սենյականի բնակարան 15% կանխավճարով, 15 տարի վարկ</div>
+          </div>
+          <div>
+            <div class="flex justify-between mb-1"><span data-i18n="l2_ex_risk">Բարձր ռիսկի սցենարներ</span> <span class="text-amber-400">19%</span></div>
+            <div class="scenario-bar w-[19%] bg-amber-400"></div>
+            <div class="text-xs text-[#4a7a5a] mt-1" data-i18n="l2_ex_risk_desc">Տոկոսադրույքների կտրուկ աճ + եկամտի անկում</div>
+          </div>
+          <div class="pt-3 border-t border-white/10 text-[#00C853] text-sm font-medium" data-i18n="l2_ex_reco">Խորհուրդ՝ Սպասել 4-6 ամիս կամ ընտրել ավելի փոքր բնակարան</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- USE CASES + ADVANCED ONLY -->
+<section class="max-w-7xl mx-auto px-6 lg:px-10 py-20">
+  <div class="text-center mb-10 fade-up">
+    <p class="text-[#00C853] font-display text-xs tracking-[.22em] uppercase mb-3" data-i18n="l2_use_label">ԿԱՐՈՂ Է ՕԳՏԱԳՈՐԾՎԵԼ</p>
+    <h2 class="font-display font-700 text-3xl" data-i18n="l2_use_title">Ոչ միայն անշարժ գույքի համար</h2>
+  </div>
+
+  <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="func-row text-sm">📈 <span class="ml-3" data-i18n="l2_use1">Բաժնետոմսերի գնման ժամանակացույց</span></div>
+    <div class="func-row text-sm">🏠 <span class="ml-3" data-i18n="l2_use2">Բնակարանի / տան գնում</span></div>
+    <div class="func-row text-sm">💼 <span class="ml-3" data-i18n="l2_use3">Բիզնեսի ընդլայնում կամ ներդրում</span></div>
+    <div class="func-row text-sm">🌍 <span class="ml-3" data-i18n="l2_use4">Արտարժույթի և կրիպտոյի կանխատեսումներ</span></div>
+  </div>
+
+  <div class="mt-12 bg-gradient-to-r from-[#111916] to-[#0d1210] border border-[#a064ff]/30 rounded-3xl p-8 lg:p-10 text-center fade-up">
+    <div class="inline-block px-4 py-1 bg-[#a064ff]/10 text-[#a064ff] text-xs font-bold tracking-widest rounded-full mb-4" data-i18n="l2_adv_badge">ADVANCED ՄԻԱՅՆ</div>
+    <h3 class="font-display text-2xl mb-3" data-i18n="l2_adv_title">1000 սցենար սիմուլյացիան հասանելի է միայն Advanced փաթեթում</h3>
+    <p class="max-w-md mx-auto text-[#8aab96] mb-6" data-i18n="l2_adv_desc">Pro փաթեթում ստանում եք հիմնական ռիսկի գնահատումներ։ Advanced-ում՝ ամբողջական մուլտի-ագենտ սիմուլյացիա ցանկացած հարցի համար։</p>
+    <a href="https://ai.mardriskai.online" target="_blank" class="btn-primary" data-i18n="nav_open_app">Բացել MardRisk 1.1 (Advanced)</a>
+  </div>
+</section>
+
+<!-- LIVE DEMO -->
+<section id="demo" class="px-6 lg:px-10 py-20 bg-[#0a0f0c]">
+  <div class="max-w-4xl mx-auto">
+    <div class="text-center mb-10 fade-up">
+      <p class="text-[#00C853] font-display text-xs tracking-[.22em] uppercase mb-3" data-i18n="l2_demo_label">ՓՈՐՁԵՔ ՀԻՄԱ</p>
+      <h2 class="font-display font-700 text-3xl text-white" data-i18n="l2_demo_title">Գործարկեք սիմուլյացիայի դեմոն</h2>
+      <p class="text-[#8aab96] mt-3" data-i18n="l2_demo_sub">Սեղմեք կոճակը և տեսեք, թե ինչպես է 1000 սցենարը վերլուծվում ակնթարթորեն</p>
+    </div>
+
+    <div class="bg-[#0d1210] border border-[#00C853]/20 rounded-3xl p-8">
+      <div class="mb-6">
+        <label class="block text-sm text-[#8aab96] mb-2" data-i18n="l2_demo_input_label">Ձեր հարցը (օրինակ)</label>
+        <input id="simQuestion" type="text" value="Ի՞նչ կլինի եթե այսօր գնեմ 2-սենյականի բնակարան Երևանում" class="dark-input w-full">
+      </div>
+
+      <button onclick="runSimulationDemo()" class="btn-primary w-full justify-center text-lg py-4" data-i18n="l2_demo_btn">Գործարկել 1000 սցենար սիմուլյացիա</button>
+
+      <div id="simProgress" class="hidden mt-8">
+        <div class="flex justify-between text-xs mb-2"><span data-i18n="l2_demo_running">Հաշվարկվում է 1000 սցենար...</span> <span id="simPercent">0%</span></div>
+        <div class="h-2 bg-[#111916] rounded overflow-hidden"><div id="simBar" class="h-2 bg-[#00C853] w-0 transition-all" style="width:0%"></div></div>
+        <div id="simStatus" class="text-xs text-[#4a7a5a] mt-2"></div>
+      </div>
+
+      <div id="simResult" class="hidden mt-8 border-t border-white/10 pt-8">
+        <div class="uppercase text-xs tracking-widest text-[#00C853] mb-4" data-i18n="l2_demo_result">ՍԻՄՈՒԼՅԱՑԻԱՅԻ ԱՐԴՅՈՒՆՔ</div>
+        <div id="simBest" class="text-xl font-display font-semibold mb-2"></div>
+        <div id="simSummary" class="text-[#c8e8d4] mb-6"></div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <div class="bg-[#111916] rounded-2xl p-4">
+            <div class="text-[#4a7a5a] text-xs" data-i18n="l2_demo_success">Հաջողության հավանականություն</div>
+            <div id="simSuccess" class="text-3xl font-display font-bold text-[#00C853] mt-1"></div>
+          </div>
+          <div class="bg-[#111916] rounded-2xl p-4">
+            <div class="text-[#4a7a5a] text-xs" data-i18n="l2_demo_risk">Միջին ռիսկի մակարդակ</div>
+            <div id="simRisk" class="text-3xl font-display font-bold mt-1"></div>
+          </div>
+          <div class="bg-[#111916] rounded-2xl p-4">
+            <div class="text-[#4a7a5a] text-xs" data-i18n="l2_demo_time">Խորհուրդվող ժամկետ</div>
+            <div id="simTime" class="text-xl font-medium mt-2"></div>
+          </div>
+        </div>
+
+        <button onclick="resetDemo()" class="mt-8 text-sm text-[#8aab96] hover:text-white" data-i18n="l2_demo_reset">Փորձել այլ հարց →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="px-6 lg:px-10 py-16 border-t border-b border-[#00C853]/20 bg-[#0a0f0c]">
+  <div class="max-w-3xl mx-auto text-center">
+    <h3 class="font-display font-700 text-2xl mb-3" data-i18n="l2_cta_title">Պատրա՞ստ եք տեսնել 1000 սցենար իրական ժամանակում</h3>
+    <p class="text-[#8aab96] mb-8" data-i18n="l2_cta_sub">Բացեք MardRisk 1.1-ը և փորձեք սիմուլյացիայի գործիքը ցանկացած ձեր հարցի վրա։</p>
+    <a href="https://ai.mardriskai.online" target="_blank" class="btn-primary text-lg px-10" data-i18n="nav_open_app">Բացել MardRisk 1.1</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="border-t border-[rgba(0,200,83,.1)] bg-[#080c0a] py-12">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 text-center text-[#2a4a3a] text-xs">
+    <p>© 2025 ՄարդՌիսկ Ակադեմիա • ԴԱՍ 03 — Սիմուլյացիաներ և 1000 սցենար սթրես-թեստեր</p>
+    <div class="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-1">
+      <a href="index.html" class="hover:text-[#00C853]">← Հիմնական էջ</a>
+      <a href="lesson.html" class="hover:text-[#00C853]">Դաս 01 — Հրամանները</a>
+      <a href="lesson1.html" class="hover:text-[#00C853]">Դաս 02 — Հիմնական ֆունկցիաներ</a>
+      <a href="https://ai.mardriskai.online" target="_blank" class="hover:text-[#00C853]">Բացել MardRisk 1.1</a>
+      <a href="https://mardriskai.online/en/privacy/" target="_blank" class="hover:text-[#00C853]">Policy</a>
+      <a href="https://mardriskai.online/en/terms" target="_blank" class="hover:text-[#00C853]">Terms</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Fade-up
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // Simulation Demo
+  function runSimulationDemo() {
+    const q = document.getElementById('simQuestion').value || 'Ի՞նչ կլինի եթե գնեմ բնակարան';
+    const progress = document.getElementById('simProgress');
+    const result = document.getElementById('simResult');
+    const bar = document.getElementById('simBar');
+    const pct = document.getElementById('simPercent');
+    const status = document.getElementById('simStatus');
+
+    progress.classList.remove('hidden');
+    result.classList.add('hidden');
+    bar.style.width = '0%';
+    pct.textContent = '0%';
+    status.textContent = 'Նախապատրաստում 1000 ագենտ...';
+
+    let p = 0;
+    const interval = setInterval(() => {
+      p += Math.random() * 18 + 7;
+      if (p > 100) p = 100;
+      bar.style.width = p + '%';
+      pct.textContent = Math.floor(p) + '%';
+
+      if (p < 35) status.textContent = 'Գործարկվում են տնտեսական սցենարներ...';
+      else if (p < 65) status.textContent = 'Հաշվարկվում են անձնական ֆինանսների ազդեցությունները...';
+      else if (p < 90) status.textContent = 'Վերլուծվում են ամենահաջողված ուղիները...';
+      else status.textContent = 'Ձևավորվում է եզրակացությունը...';
+
+      if (p >= 100) {
+        clearInterval(interval);
+        setTimeout(() => showSimResult(q), 420);
+      }
+    }, 140);
+  }
+
+  function showSimResult(question) {
+    document.getElementById('simProgress').classList.add('hidden');
+    const res = document.getElementById('simResult');
+    res.classList.remove('hidden');
+
+    // Simple mock results (can be made smarter)
+    const isApartment = question.toLowerCase().includes('բնակարան') || question.toLowerCase().includes('apartment') || question.toLowerCase().includes('квартир');
+    document.getElementById('simBest').textContent = isApartment 
+      ? 'Խորհուրդվող ռազմավարություն՝ Գնել ավելի փոքր բնակարան կամ սպասել 5 ամիս'
+      : 'Խորհուրդվող ռազմավարություն՝ Սկսել փոքր դիրքից և ավելացնել աստիճանաբար';
+    document.getElementById('simSummary').textContent = '1000 սցենարներից 642-ը ցույց տվեցին դրական արդյունք 3 տարվա հորիզոնում։ Ամենամեծ ռիսկը՝ տոկոսադրույքների կտրուկ աճը։';
+    document.getElementById('simSuccess').textContent = isApartment ? '64%' : '71%';
+    document.getElementById('simRisk').textContent = isApartment ? 'Medium' : 'Low-Medium';
+    document.getElementById('simTime').textContent = isApartment ? '5 ամիս սպասել' : 'Անմիջապես սկսել';
+  }
+
+  function resetDemo() {
+    document.getElementById('simResult').classList.add('hidden');
+    document.getElementById('simProgress').classList.add('hidden');
+  }
+
+  // 3 lang support
+  const l2Translations = {
+    hy: {
+      nav_home: "Հիմնական էջ", nav_lesson1: "Դաս 01 — Հրամաններ", nav_lesson2: "Դաս 02 — Հիմնական ֆունկցիաներ",
+      nav_how: "Ինչպես է աշխատում", nav_demo: "Դեմո սիմուլյացիա", nav_open_app: "Բացել MardRisk 1.1",
+      l2_badge: "ԴԱՍ 03 — ՍԻՄՈՒԼՅԱՑԻԱՆԵՐ ԵՎ ՍԹՐԵՍ-ԹԵՍՏԵՐ",
+      l2_title: "1000 սցենար։", l2_subtitle: "Մեկ ամենահաջողված պատասխանը",
+      l2_desc: "Մուլտի-ագենտ համակարգը գործարկում է հազարավոր սթրես-թեստեր ցանկացած հարցի համար և գտնում է ամենաօպտիմալ ռազմավարությունը։ Հասանելի է միայն Advanced փաթեթում։",
+      l2_cta_demo: "Փորձել սիմուլյացիայի դեմոն",
+      l2_step1: "Օգտատերը ակտիվացնում է սիմուլյացիայի կոճակը չաթում ցանկացած հարցի համար",
+      l2_step2: "Համակարգը գործարկում է 1000 անկախ սցենար (մուլտի-ագենտ)",
+      l2_step3: "Հավաքագրվում և վերլուծվում են արդյունքները",
+      l2_step4: "Մոդելը ներկայացնում է ամենահաջողված ռազմավարությունը + ռիսկերի քարտեզ",
+      l2_card1_title: "Մուլտի-ագենտ համակարգ", l2_card1_desc: "1000+ անկախ «ագենտներ» միաժամանակ մոդելավորում են տարբեր ապագա իրավիճակներ՝ տնտեսական ցնցումներ, տոկոսադրույքների փոփոխություններ, անձնական կյանքի իրադարձություններ և շուկայական տրենդներ։",
+      l2_card2_title: "Սթրես-թեստ ցանկացած հարցի համար", l2_card2_desc: "Պարզապես գրեք ձեր հարցը և սեղմեք «Սիմուլյացիա» կոճակը։ Մոդելը ավտոմատ կերպով կկառուցի հազարավոր սցենարներ և կգտնի ամենակայուն և շահավետ ուղին։",
+      l2_card3_title: "Ամենահաջողված պատասխանը", l2_card3_desc: "1000 սցենարներից հետո համակարգը ընտրում է ամենաբարձր հավանականությամբ հաջողություն ունեցող ռազմավարությունը, ցույց է տալիս ռիսկերը և առաջարկում կոնկրետ քայլեր։",
+      l2_ex_label: "ՕՐԻՆԱԿ", l2_ex_title: "«Ի՞նչ կլինի, եթե այսօր գնեմ բնակարան»",
+      l2_ex_p1: "Օգտատերը հարցնում է և ակտիվացնում սիմուլյացիան։",
+      l2_ex_p2: "Համակարգը գործարկում է 1000 սցենար՝ հաշվի առնելով տոկոսադրույքների աճը, գնաճը, անշարժ գույքի շուկայի անկումը, ձեր եկամուտների փոփոխությունը, վարկի մարման ժամկետները և այլն։",
+      l2_ex_p3: "Արդյունքում դուք ստանում եք ոչ թե մեկ կարծիք, այլ ամենահավանական և ամենակայուն ֆինանսական ճանապարհը՝ հստակ թվերով և ռիսկերի մակարդակներով։",
+      l2_ex_result: "ՍԻՄՈՒԼՅԱՑԻԱՅԻ ԱՐԴՅՈՒՆՔ (ՕՐԻՆԱԿ)", l2_ex_best: "Ամենահաջողված սցենար", l2_ex_best_desc: "Գնել 2-սենյականի բնակարան 15% կանխավճարով, 15 տարի վարկ",
+      l2_ex_risk: "Բարձր ռիսկի սցենարներ", l2_ex_risk_desc: "Տոկոսադրույքների կտրուկ աճ + եկամտի անկում",
+      l2_ex_reco: "Խորհուրդ՝ Սպասել 4-6 ամիս կամ ընտրել ավելի փոքր բնակարան",
+      l2_use_label: "ԿԱՐՈՂ Է ՕԳՏԱԳՈՐԾՎԵԼ", l2_use_title: "Ոչ միայն անշարժ գույքի համար",
+      l2_use1: "Բաժնետոմսերի գնման ժամանակացույց", l2_use2: "Բնակարանի / տան գնում",
+      l2_use3: "Բիզնեսի ընդլայնում կամ ներդրում", l2_use4: "Արտարժույթի և կրիպտոյի կանխատեսումներ",
+      l2_adv_badge: "ADVANCED ՄԻԱՅՆ", l2_adv_title: "1000 սցենար սիմուլյացիան հասանելի է միայն Advanced փաթեթում",
+      l2_adv_desc: "Pro փաթեթում ստանում եք հիմնական ռիսկի գնահատումներ։ Advanced-ում՝ ամբողջական մուլտի-ագենտ սիմուլյացիա ցանկացած հարցի համար։",
+      l2_demo_label: "ՓՈՐՁԵՔ ՀԻՄԱ", l2_demo_title: "Գործարկեք սիմուլյացիայի դեմոն",
+      l2_demo_sub: "Սեղմեք կոճակը և տեսեք, թե ինչպես է 1000 սցենարը վերլուծվում ակնթարթորեն",
+      l2_demo_input_label: "Ձեր հարցը (օրինակ)",
+      l2_demo_btn: "Գործարկել 1000 սցենար սիմուլյացիա",
+      l2_demo_running: "Հաշվարկվում է 1000 սցենար...",
+      l2_demo_result: "ՍԻՄՈՒԼՅԱՑԻԱՅԻ ԱՐԴՅՈՒՆՔ",
+      l2_demo_success: "Հաջողության հավանականություն", l2_demo_risk: "Միջին ռիսկի մակարդակ", l2_demo_time: "Խորհուրդվող ժամկետ",
+      l2_demo_reset: "Փորձել այլ հարց →",
+      l2_cta_title: "Պատրա՞ստ եք տեսնել 1000 սցենար իրական ժամանակում",
+      l2_cta_sub: "Բացեք MardRisk 1.1-ը և փորձեք սիմուլյացիայի գործիքը ցանկացած ձեր հարցի վրա։"
+    },
+    en: {
+      nav_home: "Home", nav_lesson1: "Lesson 01 — Commands", nav_lesson2: "Lesson 02 — Core Functions",
+      nav_how: "How it works", nav_demo: "Simulation demo", nav_open_app: "Open MardRisk 1.1",
+      l2_badge: "LESSON 03 — SIMULATIONS & STRESS TESTS",
+      l2_title: "1000 scenarios.", l2_subtitle: "One optimal answer",
+      l2_desc: "The multi-agent engine runs thousands of stress tests for any question and finds the most robust strategy. Available only in the Advanced plan.",
+      l2_cta_demo: "Try the simulation demo",
+      l2_step1: "User activates the simulation button in chat for any question",
+      l2_step2: "System launches 1000 independent scenarios (multi-agent)",
+      l2_step3: "Results are aggregated and analyzed",
+      l2_step4: "Model presents the best-performing strategy + risk map",
+      l2_card1_title: "Multi-agent system", l2_card1_desc: "1000+ independent agents simultaneously model different future states — economic shocks, rate changes, life events, and market trends.",
+      l2_card2_title: "Stress-test any question", l2_card2_desc: "Just type your question and press “Simulate”. The model automatically builds thousands of scenarios and finds the most stable profitable path.",
+      l2_card3_title: "The winning answer", l2_card3_desc: "After 1000 scenarios the system selects the highest-probability successful strategy, shows risks, and gives concrete next steps.",
+      l2_ex_label: "EXAMPLE", l2_ex_title: "“What happens if I buy an apartment today?”",
+      l2_ex_p1: "The user asks and activates simulation.",
+      l2_ex_p2: "The system runs 1000 scenarios taking into account rate hikes, inflation, real-estate crashes, income changes, loan terms, etc.",
+      l2_ex_p3: "You receive not one opinion, but the most probable and stable financial path with exact numbers and risk levels.",
+      l2_ex_result: "SIMULATION RESULT (EXAMPLE)", l2_ex_best: "Best-performing scenario", l2_ex_best_desc: "Buy a 2-room apartment with 15% down payment, 15-year mortgage",
+      l2_ex_risk: "High-risk scenarios", l2_ex_risk_desc: "Sharp rate increase + income drop",
+      l2_ex_reco: "Recommendation: Wait 4-6 months or choose a smaller apartment",
+      l2_use_label: "CAN BE USED FOR", l2_use_title: "Not only real estate",
+      l2_use1: "Stock purchase timing", l2_use2: "Buying a house/apartment",
+      l2_use3: "Business expansion or investment", l2_use4: "Currency & crypto forecasts",
+      l2_adv_badge: "ADVANCED ONLY", l2_adv_title: "1000-scenario simulation is available only in the Advanced plan",
+      l2_adv_desc: "Pro gives you basic risk scores. Advanced unlocks full multi-agent simulation for any question.",
+      l2_demo_label: "TRY IT NOW", l2_demo_title: "Run the simulation demo",
+      l2_demo_sub: "Press the button and watch 1000 scenarios being analyzed in real time",
+      l2_demo_input_label: "Your question (example)",
+      l2_demo_btn: "Run 1000-scenario simulation",
+      l2_demo_running: "Calculating 1000 scenarios...",
+      l2_demo_result: "SIMULATION RESULT",
+      l2_demo_success: "Success probability", l2_demo_risk: "Average risk level", l2_demo_time: "Recommended timing",
+      l2_demo_reset: "Try another question →",
+      l2_cta_title: "Ready to see 1000 scenarios in real time?",
+      l2_cta_sub: "Open MardRisk 1.1 and run the simulation tool on any question you have."
+    },
+    ru: {
+      nav_home: "Главная", nav_lesson1: "Урок 01 — Команды", nav_lesson2: "Урок 02 — Основные функции",
+      nav_how: "Как это работает", nav_demo: "Демо симуляции", nav_open_app: "Открыть MardRisk 1.1",
+      l2_badge: "УРОК 03 — СИМУЛЯЦИИ И СТРЕСС-ТЕСТЫ",
+      l2_title: "1000 сценариев.", l2_subtitle: "Один оптимальный ответ",
+      l2_desc: "Мульти-агентная система запускает тысячи стресс-тестов для любого вопроса и находит наиболее устойчивую стратегию. Доступно только в тарифе Advanced.",
+      l2_cta_demo: "Попробовать демо симуляции",
+      l2_step1: "Пользователь нажимает кнопку симуляции в чате для любого вопроса",
+      l2_step2: "Система запускает 1000 независимых сценариев (мульти-агент)",
+      l2_step3: "Результаты собираются и анализируются",
+      l2_step4: "Модель выдаёт наиболее успешную стратегию + карту рисков",
+      l2_card1_title: "Мульти-агентная система", l2_card1_desc: "1000+ независимых агентов одновременно моделируют разные будущие состояния — экономические шоки, изменения ставок, жизненные события и рыночные тренды.",
+      l2_card2_title: "Стресс-тест любого вопроса", l2_card2_desc: "Просто напишите вопрос и нажмите «Симулировать». Модель автоматически построит тысячи сценариев и найдёт самый стабильный прибыльный путь.",
+      l2_card3_title: "Победивший ответ", l2_card3_desc: "После 1000 сценариев система выбирает стратегию с наибольшей вероятностью успеха, показывает риски и даёт конкретные шаги.",
+      l2_ex_label: "ПРИМЕР", l2_ex_title: "«Что будет, если я куплю квартиру сегодня?»",
+      l2_ex_p1: "Пользователь задаёт вопрос и запускает симуляцию.",
+      l2_ex_p2: "Система прогоняет 1000 сценариев с учётом роста ставок, инфляции, падения рынка недвижимости, изменения доходов, сроков кредита и т.д.",
+      l2_ex_p3: "Вы получаете не одно мнение, а наиболее вероятный и устойчивый финансовый путь с точными цифрами и уровнями рисков.",
+      l2_ex_result: "РЕЗУЛЬТАТ СИМУЛЯЦИИ (ПРИМЕР)", l2_ex_best: "Лучший сценарий", l2_ex_best_desc: "Купить 2-комнатную квартиру с 15% первоначальным взносом, ипотека на 15 лет",
+      l2_ex_risk: "Высокорисковые сценарии", l2_ex_risk_desc: "Резкий рост ставок + падение дохода",
+      l2_ex_reco: "Рекомендация: Подождать 4-6 месяцев или выбрать меньшую квартиру",
+      l2_use_label: "МОЖНО ИСПОЛЬЗОВАТЬ ДЛЯ", l2_use_title: "Не только недвижимость",
+      l2_use1: "Тайминг покупки акций", l2_use2: "Покупка квартиры / дома",
+      l2_use3: "Расширение бизнеса или инвестиции", l2_use4: "Прогнозы валют и крипты",
+      l2_adv_badge: "ТОЛЬКО ADVANCED", l2_adv_title: "Симуляция 1000 сценариев доступна только в тарифе Advanced",
+      l2_adv_desc: "В Pro вы получаете базовую оценку рисков. В Advanced — полная мульти-агентная симуляция для любого вопроса.",
+      l2_demo_label: "ПОПРОБУЙТЕ СЕЙЧАС", l2_demo_title: "Запустите демо симуляции",
+      l2_demo_sub: "Нажмите кнопку и посмотрите, как 1000 сценариев анализируются в реальном времени",
+      l2_demo_input_label: "Ваш вопрос (пример)",
+      l2_demo_btn: "Запустить симуляцию 1000 сценариев",
+      l2_demo_running: "Рассчитывается 1000 сценариев...",
+      l2_demo_result: "РЕЗУЛЬТАТ СИМУЛЯЦИИ",
+      l2_demo_success: "Вероятность успеха", l2_demo_risk: "Средний уровень риска", l2_demo_time: "Рекомендуемый срок",
+      l2_demo_reset: "Попробовать другой вопрос →",
+      l2_cta_title: "Готовы увидеть 1000 сценариев в реальном времени?",
+      l2_cta_sub: "Откройте MardRisk 1.1 и запустите инструмент симуляции на любой ваш вопрос."
+    }
+  };
+
+  function setLanguage(lang) {
+    localStorage.setItem('lang', lang);
+    document.documentElement.lang = (lang === 'hy' ? 'hy' : lang === 'en' ? 'en' : 'ru');
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (l2Translations[lang] && l2Translations[lang][key]) el.textContent = l2Translations[lang][key];
+    });
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      const active = btn.dataset.lang === lang;
+      btn.classList.toggle('bg-[#00C853]', active);
+      btn.classList.toggle('text-black', active);
+    });
+  }
+
+  function initLanguage() {
+    const saved = localStorage.getItem('lang') || 'hy';
+    setLanguage(saved);
+    document.querySelectorAll('.lang-btn').forEach(btn => btn.addEventListener('click', () => setLanguage(btn.dataset.lang)));
+  }
+  initLanguage();
+
+  console.log('%c✅ lesson2.html — 1000 scenario simulation lesson ready (3 languages)', 'color:#00C853; font-family:monospace; font-size:12px;');
+</script>
+
+</body>
+</html>

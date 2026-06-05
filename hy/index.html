@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ՄարդՌիսկ Ակադեմիա — ԱԻ-ով ղեկավարվող ֆինանսական ինտելեկտ</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+
+  <!-- Favicon — լոգոյի նման (կանաչ քառակուսի + գրաֆիկի գագաթներ) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='2' fill='%2300C853'/%3E%3Cpath d='M2 12 L8 4 L14 12' stroke='%23080c0a' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M5 12 L8 7 L11 12' stroke='%23080c0a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' opacity='.5'/%3E%3C/svg%3E" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            emerald: { accent: '#00C853', dim: '#00a844', glow: '#00ff6a22' },
+            dark: { 900: '#080c0a', 800: '#0d1210', 700: '#111916', 600: '#182018', 500: '#1e2a1e' },
+          },
+          fontFamily: {
+            display: ['Syne', 'sans-serif'],
+            body: ['DM Sans', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background-color: #080c0a;
+      color: #e2ece6;
+      font-family: 'DM Sans', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── Grid noise overlay ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,200,83,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,83,.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Glow blob ── */
+    .hero-blob {
+      position: absolute;
+      width: 680px; height: 680px;
+      background: radial-gradient(circle, rgba(0,200,83,.18) 0%, transparent 70%);
+      border-radius: 50%;
+      top: -180px; right: -140px;
+      filter: blur(60px);
+      pointer-events: none;
+      animation: pulse-blob 7s ease-in-out infinite;
+    }
+    .hero-blob-2 {
+      position: absolute;
+      width: 420px; height: 420px;
+      background: radial-gradient(circle, rgba(0,200,83,.09) 0%, transparent 70%);
+      border-radius: 50%;
+      bottom: -80px; left: -100px;
+      filter: blur(50px);
+      pointer-events: none;
+      animation: pulse-blob 9s ease-in-out infinite reverse;
+    }
+    @keyframes pulse-blob {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.12); opacity: .75; }
+    }
+
+    /* ── Ticker bar ── */
+    .ticker-wrap { overflow: hidden; }
+    .ticker-track {
+      display: flex; gap: 3rem;
+      animation: ticker 28s linear infinite;
+      white-space: nowrap;
+    }
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(8,12,10,.85);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(0,200,83,.12);
+    }
+
+    /* ── Headline gradient ── */
+    .gradient-text {
+      background: linear-gradient(135deg, #ffffff 30%, #00C853 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── CTA button ── */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: #00C853;
+      color: #080c0a;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      letter-spacing: .03em;
+      padding: .85rem 2rem;
+      border-radius: 2px;
+      border: none; cursor: pointer;
+      transition: background .25s, box-shadow .25s, transform .15s;
+      box-shadow: 0 0 24px rgba(0,200,83,.35);
+      text-decoration: none;
+    }
+    .btn-primary:hover {
+      background: #00e65d;
+      box-shadow: 0 0 40px rgba(0,200,83,.55);
+      transform: translateY(-2px);
+    }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: transparent;
+      color: #00C853;
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      padding: .75rem 1.75rem;
+      border-radius: 2px;
+      border: 1px solid rgba(0,200,83,.45);
+      cursor: pointer;
+      transition: border-color .25s, background .25s, transform .15s;
+      text-decoration: none;
+    }
+    .btn-outline:hover {
+      border-color: #00C853;
+      background: rgba(0,200,83,.07);
+      transform: translateY(-2px);
+    }
+
+    /* ── Cards ── */
+    .feature-card {
+      background: #0d1210;
+      border: 1px solid rgba(0,200,83,.13);
+      border-radius: 4px;
+      padding: 2rem;
+      transition: border-color .3s, box-shadow .3s, transform .3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(0,200,83,.05) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+    .feature-card:hover {
+      border-color: rgba(0,200,83,.4);
+      box-shadow: 0 0 32px rgba(0,200,83,.12);
+      transform: translateY(-4px);
+    }
+    .feature-card:hover::before { opacity: 1; }
+
+    /* ── Module rows ── */
+    .module-row {
+      display: flex; align-items: center; gap: 1.25rem;
+      padding: 1.25rem 1.5rem;
+      background: #0d1210;
+      border: 1px solid rgba(0,200,83,.1);
+      border-radius: 3px;
+      transition: border-color .25s, background .25s;
+    }
+    .module-row:hover {
+      border-color: rgba(0,200,83,.35);
+      background: #111916;
+    }
+
+    /* ── Testimonial placeholder card ── */
+    .testimonial-card {
+      background: #0d1210;
+      border: 1px solid rgba(0,200,83,.1);
+      border-radius: 4px;
+      padding: 2rem;
+      display: flex; flex-direction: column; gap: 1.25rem;
+    }
+
+    /* ── Stats strip ── */
+    .stat-chip {
+      background: rgba(0,200,83,.07);
+      border: 1px solid rgba(0,200,83,.18);
+      border-radius: 3px;
+      padding: .6rem 1.25rem;
+      display: flex; flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── Section divider ── */
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,200,83,.3), transparent);
+      margin: 0 auto;
+      max-width: 60rem;
+    }
+
+    /* ── Fade-up animation on scroll ── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Input ── */
+    .dark-input {
+      background: #111916;
+      border: 1px solid rgba(0,200,83,.2);
+      color: #e2ece6;
+      border-radius: 2px;
+      padding: .75rem 1rem;
+      outline: none;
+      font-family: 'DM Sans', sans-serif;
+      transition: border-color .25s, box-shadow .25s;
+      width: 100%;
+    }
+    .dark-input:focus {
+      border-color: #00C853;
+      box-shadow: 0 0 0 3px rgba(0,200,83,.12);
+    }
+    .dark-input::placeholder { color: #4a6455; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #080c0a; }
+    ::-webkit-scrollbar-thumb { background: rgba(0,200,83,.3); border-radius: 3px; }
+
+    /* Additional premium styling for Command section */
+    .command-code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      background: #080c0a;
+      color: #00C853;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 15px;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     TICKER BAR
+════════════════════════════════════════════ -->
+<div class="ticker-wrap bg-[#0d1210] border-b border-[rgba(0,200,83,.15)] py-2 text-xs font-body text-[#4a7a5a]">
+  <div class="ticker-track">
+    <!-- repeated twice for seamless loop -->
+    <span>ՊՈՐՏՖՈԼԻՈՅԻ ՍԹՐԵՍ-ԹԵՍՏ ↗ +18.4%</span>
+    <span class="text-[#00C853]">●</span>
+    <span>ԱԻ ՌԻՍԿԻ ԱՆԱԼԻԶ · 3-ՐԴ ՄՈԴՈՒԼԸ ԱՅԺՄ ՀԱՍԱՆԵԼԻ Է</span>
+    <span class="text-[#00C853]">●</span>
+    <span>ԽՈՐՔԱՅԻՆ ՏՐԱՄԱԲԱՆՈՒԹՅՈՒՆ · ԱՆՀԱՏԱԿԱՆ ՖԻՆԱՆՍՆԵՐ</span>
+    <span class="text-[#00C853]">●</span>
+    <span>ՎԵՐԱՊԱՏՐԱՍՏՎԱԾ ՀԱՐՍՏՈՒԹՅԱՆ ՊԱՇՏՊԱՆՈՒԹՅԱՆ ԾՐԱԳԻՐ</span>
+    <span class="text-[#00C853]">●</span>
+    <span>ՇՈՒԿԱՅԻ ՍԻՄՈՒԼԱՑԻՈՆ ԻՆԺԵՆԵՐ v2.4</span>
+    <span class="text-[#00C853]">●</span>
+    <span>ՊՈՐՏՖՈԼԻՈՅԻ ՍԹՐԵՍ-ԹԵՍՏ ↗ +18.4%</span>
+    <span class="text-[#00C853]">●</span>
+    <span>ԱԻ ՌԻՍԿԻ ԱՆԱԼԻԶ · 3-ՐԴ ՄՈԴՈՒԼԸ ԱՅԺՄ ՀԱՍԱՆԵԼԻ Է</span>
+    <span class="text-[#00C853]">●</span>
+    <span>ԽՈՐՔԱՅԻՆ ՏՐԱՄԱԲԱՆՈՒԹՅՈՒՆ · ԱՆՀԱՏԱԿԱՆ ՖԻՆԱՆՍՆԵՐ</span>
+    <span class="text-[#00C853]">●</span>
+    <span>ՎԵՐԱՊԱՏՐԱՍՏՎԱԾ ՀԱՐՍՏՈՒԹՅԱՆ ՊԱՇՏՊԱՆՈՒԹՅԱՆ ԾՐԱԳԻՐ</span>
+    <span class="text-[#00C853]">●</span>
+    <span>ՇՈՒԿԱՅԻ ՍԻՄՈՒԼԱՑԻՈՆ ԻՆԺԵՆԵՐ v2.4</span>
+    <span class="text-[#00C853]">●</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     NAV
+════════════════════════════════════════════ -->
+<nav>
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 py-4 flex items-center justify-between">
+    <!-- Logo -->
+    <a href="#" class="flex items-center gap-2.5 no-underline">
+      <div class="w-7 h-7 rounded-sm bg-[#00C853] flex items-center justify-center">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 12 L8 4 L14 12" stroke="#080c0a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 12 L8 7 L11 12" stroke="#080c0a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/></svg>
+      </div>
+      <span class="font-display font-800 text-white text-lg tracking-tight">ՄարդՌիսկ <span class="text-[#00C853]">Ակադեմիա</span></span>
+    </a>
+
+    <!-- Desktop links -->
+    <ul class="hidden md:flex items-center gap-8 list-none font-body text-sm text-[#8aab96]">
+      <li><a href="#why" class="hover:text-white transition-colors">Ինչու՞ Ակադեմիա</a></li>
+      <li><a href="#curriculum" class="hover:text-white transition-colors">Դասընթացի ծրագիր</a></li>
+      <li><a href="#commands" class="hover:text-white transition-colors">Հրամաններ</a></li>
+      <li><a href="#testimonials" class="hover:text-white transition-colors">Համայնք</a></li>
+      <li><a href="#newsletter" class="hover:text-white transition-colors">Նամակագրություն</a></li>
+    </ul>
+
+    <!-- Language switcher -->
+    <div class="hidden md:flex items-center gap-1 text-[10px] font-mono border border-[rgba(0,200,83,.25)] rounded px-1 py-0.5 mr-2 lang-switch">
+      <a href="/hy/" class="hover:text-white px-1.5 py-0.5 rounded bg-[#00C853] text-black font-semibold">ՀՅ</a>
+      <a href="/en/" class="hover:text-white px-1.5 py-0.5 rounded">EN</a>
+      <a href="/ru/" class="hover:text-white px-1.5 py-0.5 rounded">RU</a>
+    </div>
+
+    <!-- CTA -->
+    <a href="https://ai.mardriskai.online" target="_blank" class="btn-primary text-sm hidden sm:inline-flex" data-i18n="nav_open_app">
+      Բացել MardRisk 1.1
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+
+    <!-- Mobile hamburger (functional via details) -->
+    <details class="md:hidden relative">
+      <summary class="list-none cursor-pointer p-2 border border-[rgba(0,200,83,.2)] rounded text-[#00C853]">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </summary>
+      <div class="absolute right-0 top-12 w-56 bg-[#0d1210] border border-[rgba(0,200,83,.18)] rounded p-4 flex flex-col gap-3 text-sm font-body text-[#8aab96] z-50">
+        <a href="#why" class="hover:text-white transition-colors" data-i18n="nav_why">Ինչու՞ Ակադեմիա</a>
+        <a href="#curriculum" class="hover:text-white transition-colors" data-i18n="nav_curriculum">Դասընթացի ծրագիր</a>
+        <a href="#commands" class="hover:text-white transition-colors" data-i18n="nav_commands">Հրամաններ</a>
+        <a href="#testimonials" class="hover:text-white transition-colors" data-i18n="nav_community">Համայնք</a>
+        <a href="#newsletter" class="hover:text-white transition-colors" data-i18n="nav_newsletter">Նամակագրություն</a>
+        <div class="flex items-center gap-1 text-[10px] font-mono border border-[rgba(0,200,83,.25)] rounded px-1 py-1 mt-1 lang-switch">
+          <a href="/hy/" class="flex-1 text-center hover:text-white px-1 py-0.5 rounded bg-[#00C853] text-black font-semibold">ՀՅ</a>
+          <a href="/en/" class="flex-1 text-center hover:text-white px-1 py-0.5 rounded">EN</a>
+          <a href="/ru/" class="flex-1 text-center hover:text-white px-1 py-0.5 rounded">RU</a>
+        </div>
+        <a href="https://ai.mardriskai.online" target="_blank" class="btn-primary text-xs mt-1 justify-center" data-i18n="nav_open_app">Բացել MardRisk 1.1</a>
+      </div>
+    </details>
+  </div>
+</nav>
+
+
+<!-- ═══════════════════════════════════════════
+     HERO
+════════════════════════════════════════════ -->
+<section id="hero" class="relative min-h-[92vh] flex items-center overflow-hidden px-6 lg:px-10">
+  <div class="hero-blob"></div>
+  <div class="hero-blob-2"></div>
+
+  <div class="max-w-7xl mx-auto w-full relative z-10 pt-16 pb-24 grid lg:grid-cols-2 gap-16 items-center">
+
+    <!-- Left column -->
+    <div class="fade-up">
+      <!-- Badge -->
+      <div class="inline-flex items-center gap-2 border border-[rgba(0,200,83,.25)] bg-[rgba(0,200,83,.07)] rounded-full px-4 py-1.5 mb-8">
+        <span class="w-1.5 h-1.5 rounded-full bg-[#00C853] animate-pulse"></span>
+        <span class="text-[#00C853] text-xs font-display font-600 tracking-widest uppercase" data-i18n="hero_badge">ՄարդՌիսկ 1.1</span>
+      </div>
+
+      <h1 class="font-display font-800 text-4xl sm:text-5xl xl:text-[3.75rem] leading-[1.08] tracking-tight mb-6">
+        <span class="gradient-text" data-i18n="hero_title">Վերահսկեք Ձեր ֆինանսական<br/>ապագան</span><br/>
+        <span class="text-white" data-i18n="hero_subtitle">ԱԻ-ով ղեկավարվող<br/>տրամաբանությամբ։</span>
+      </h1>
+
+      <p class="font-body text-[#8aab96] text-lg leading-relaxed max-w-xl mb-10" data-i18n="hero_desc">
+        Սովորեք սթրես-թեստավորել ձեր ներդրումները և պաշտպանել ձեր կապիտալը <strong class="text-[#c8e8d4] font-500">ՄարդՌիսկ Ակադեմիայի</strong> միջոցով — որտեղ խորքային ԱԻ տրամաբանությունն հանդիպում է իրական աշխարհի ֆինանսական ինտելեկտին։
+      </p>
+
+      <div class="flex flex-wrap gap-4 mb-12">
+        <a href="https://ai.mardriskai.online" target="_blank" class="btn-primary" data-i18n="hero_cta_app">
+          Բացել MardRisk 1.1
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="#curriculum" class="btn-outline" data-i18n="hero_cta_curriculum">
+          Դիտեք դասընթացի ծրագիրը
+        </a>
+      </div>
+
+      <!-- Stats -->
+      <div class="flex flex-wrap gap-4">
+        <div class="stat-chip">
+          <span class="font-display font-700 text-[#00C853] text-xl">3</span>
+          <span class="text-[#4a7a5a] text-xs mt-0.5">Հիմնական մոդուլներ</span>
+        </div>
+        <div class="stat-chip">
+          <span class="font-display font-700 text-[#00C853] text-xl">ԱԻ-հիմնված</span>
+          <span class="text-[#4a7a5a] text-xs mt-0.5">Մեթոդաբանություն</span>
+        </div>
+        <div class="stat-chip">
+          <span class="font-display font-700 text-[#00C853] text-xl">Ուղիղ</span>
+          <span class="text-[#4a7a5a] text-xs mt-0.5">Շուկայի սիմուլացիաներ</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right column — decorative dashboard card -->
+    <div class="fade-up hidden lg:flex items-center justify-center" style="transition-delay:.2s">
+      <div class="relative w-full max-w-md">
+        <!-- Outer glow -->
+        <div class="absolute inset-0 rounded-lg" style="background:radial-gradient(ellipse at 50% 30%,rgba(0,200,83,.18) 0%,transparent 70%);filter:blur(30px);transform:scale(1.1);"></div>
+
+        <!-- Card -->
+        <div class="relative bg-[#0d1210] border border-[rgba(0,200,83,.2)] rounded-lg p-6 shadow-2xl">
+          <!-- Card header -->
+          <div class="flex items-center justify-between mb-5">
+            <span class="font-display font-600 text-sm text-[#8aab96] tracking-wide">Պորտֆոլիոյի ռիսկի միավոր</span>
+            <span class="text-[#00C853] text-xs bg-[rgba(0,200,83,.1)] border border-[rgba(0,200,83,.2)] px-2 py-0.5 rounded-full">ՈՒՂԻՂ ԱՆԱԼԻԶ</span>
+          </div>
+
+          <!-- Big score -->
+          <div class="text-center py-6">
+            <div class="font-display font-800 text-7xl text-white mb-1">72<span class="text-[#00C853] text-4xl">/100</span></div>
+            <div class="text-[#8aab96] text-sm">Կայունության ինդեքս · Սթրես-թեստավորված</div>
+          </div>
+
+          <!-- Mini chart bars -->
+          <div class="flex items-end gap-1.5 h-12 mb-5">
+            <div class="flex-1 rounded-sm" style="height:40%;background:rgba(0,200,83,.25)"></div>
+            <div class="flex-1 rounded-sm" style="height:60%;background:rgba(0,200,83,.35)"></div>
+            <div class="flex-1 rounded-sm" style="height:35%;background:rgba(0,200,83,.25)"></div>
+            <div class="flex-1 rounded-sm" style="height:80%;background:rgba(0,200,83,.55)"></div>
+            <div class="flex-1 rounded-sm" style="height:65%;background:rgba(0,200,83,.45)"></div>
+            <div class="flex-1 rounded-sm" style="height:90%;background:#00C853"></div>
+            <div class="flex-1 rounded-sm" style="height:70%;background:rgba(0,200,83,.5)"></div>
+            <div class="flex-1 rounded-sm" style="height:55%;background:rgba(0,200,83,.4)"></div>
+            <div class="flex-1 rounded-sm" style="height:85%;background:rgba(0,200,83,.6)"></div>
+            <div class="flex-1 rounded-sm" style="height:75%;background:rgba(0,200,83,.5)"></div>
+            <div class="flex-1 rounded-sm" style="height:95%;background:#00C853;box-shadow:0 0 8px #00C85388"></div>
+            <div class="flex-1 rounded-sm" style="height:60%;background:rgba(0,200,83,.4)"></div>
+          </div>
+
+          <!-- Metric rows -->
+          <div class="space-y-2.5">
+            <div class="flex justify-between text-sm">
+              <span class="text-[#4a7a5a]">Տատանումների ազդեցություն</span>
+              <span class="text-[#e2ece6] font-500">Ցածր · 12.4%</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-[#4a7a5a]">Ուղղորդման ռիսկ</span>
+              <span class="text-[#00C853] font-500">Պաշտպանված ✓</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-[#4a7a5a]">ԱԻ վստահություն</span>
+              <span class="text-[#e2ece6] font-500">94.7%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     WHY ACADEMY
+════════════════════════════════════════════ -->
+<div class="section-divider"></div>
+
+<section id="why" class="max-w-7xl mx-auto px-6 lg:px-10 py-24">
+  <div class="text-center mb-16 fade-up">
+    <p class="text-[#00C853] font-display text-xs tracking-[.22em] uppercase mb-3">Ինչու՞ Ակադեմիա</p>
+    <h2 class="font-display font-700 text-3xl sm:text-4xl text-white leading-tight">Ինտելեկտ, որն պաշտպանում է<br/><span class="text-[#8aab96]">Ձեր ֆինանսական ապագան</span></h2>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-6">
+
+    <!-- Card 1 -->
+    <div class="feature-card fade-up">
+      <div class="w-11 h-11 rounded-sm bg-[rgba(0,200,83,.1)] border border-[rgba(0,200,83,.2)] flex items-center justify-center mb-5">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="8" stroke="#00C853" stroke-width="1.5"/><path d="M7 11l3 3 5-5" stroke="#00C853" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h3 class="font-display font-600 text-white text-lg mb-3">Տվյալների վրա հիմնված մտածելակերպ</h3>
+      <p class="text-[#6a8a76] text-sm leading-relaxed">Փոխարինեք ինտուիտիվ որոշումները կառուցվածքային, ապացույցների վրա հիմնված շրջանակներով։ Սովորեք կարդալ ֆինանսական ազդանշանները այնպես, ինչպես անում են անալիտիկները — ճշգրտությամբ և համատեքստով։</p>
+      <div class="mt-6 pt-5 border-t border-[rgba(0,200,83,.1)] flex items-center gap-2 text-[#00C853] text-xs font-display font-600 tracking-wide">
+        <span>ՀԻՄՆԱԴՐՈՒՅՑՆԵՐԻ ՇՐՋԱՆԱԿ</span>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="feature-card fade-up" style="transition-delay:.12s">
+      <div class="w-11 h-11 rounded-sm bg-[rgba(0,200,83,.1)] border border-[rgba(0,200,83,.2)] flex items-center justify-center mb-5">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="14" width="3" height="5" rx="1" fill="#00C853" opacity=".5"/><rect x="9.5" y="9" width="3" height="10" rx="1" fill="#00C853" opacity=".75"/><rect x="16" y="4" width="3" height="15" rx="1" fill="#00C853"/><path d="M4.5 13l5-5 5.5 3 4-6" stroke="#00C853" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h3 class="font-display font-600 text-white text-lg mb-3">ԱԻ ռիսկի վերլուծություն</h3>
+      <p class="text-[#6a8a76] text-sm leading-relaxed">Օգտագործեք ՄարդՌիսկի սեփական ԱԻ շարժիչը շուկայական ցնցումները մոդելավորելու, ծայրահեղ ռիսկերը սիմուլացնելու և ձեր պորտֆոլիոյի յուրաքանչյուր դիրքը սթրես-թեստավորելու համար — նախքան շուկան դա կանի ձեզ համար։</p>
+      <div class="mt-6 pt-5 border-t border-[rgba(0,200,83,.1)] flex items-center gap-2 text-[#00C853] text-xs font-display font-600 tracking-wide">
+        <span>ՀԻՄՆԱԿԱՆ ՄՈԴՈՒԼ</span>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="feature-card fade-up" style="transition-delay:.24s">
+      <div class="w-11 h-11 rounded-sm bg-[rgba(0,200,83,.1)] border border-[rgba(0,200,83,.2)] flex items-center justify-center mb-5">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 3l2 5h5l-4 3 1.5 5L11 13l-4.5 3 1.5-5L4 8h5z" stroke="#00C853" stroke-width="1.5" stroke-linejoin="round"/></svg>
+      </div>
+      <h3 class="font-display font-600 text-white text-lg mb-3">Վերապատրաստված հարստության պաշտպանություն</h3>
+      <p class="text-[#6a8a76] text-sm leading-relaxed">Ավարտեք ակադեմիան և ստացեք վկայական, որը ցույց է տալիս լուրջ ֆինանսական կոմպետենտություն — ԱԻ-ով ապահովված պորտֆոլիոյի պաշտպանության ռազմավարությունների ապացուցված տիրապետում։</p>
+      <div class="mt-6 pt-5 border-t border-[rgba(0,200,83,.1)] flex items-center gap-2 text-[#00C853] text-xs font-display font-600 tracking-wide">
+        <span>ՎԿԱՅԱԿԱՆ</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     CURRICULUM
+════════════════════════════════════════════ -->
+<div class="section-divider"></div>
+
+<section id="curriculum" class="px-6 lg:px-10 py-24 bg-[#0a0f0c]">
+  <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-start">
+
+    <div class="fade-up">
+      <p class="text-[#00C853] font-display text-xs tracking-[.22em] uppercase mb-3" data-i18n="curr_learn_label">Ինչ կսովորեք</p>
+      <h2 class="font-display font-700 text-3xl sm:text-4xl text-white leading-tight mb-5" data-i18n="curr_title">Դասընթացի ծրագիր, որը ստեղծված է<br/><span class="text-[#8aab96]">Ժամանակակից ներդրողի համար</span></h2>
+      <p class="text-[#6a8a76] text-base leading-relaxed mb-8" data-i18n="curriculum_desc">
+        Յուրաքանչյուր դաս հաջորդաբար կառուցում է իրական կոմպետենտություն — հիմնական հրամաններից մինչև հիմնական ֆունկցիաներ և առաջադեմ ԱԻ սիմուլացիաներ։ Առանց ավելորդի։ Առանց տեսության տեսության համար։
+      </p>
+      <a href="https://ai.mardriskai.online" target="_blank" class="btn-primary inline-flex" data-i18n="curriculum_cta">
+        Բացել MardRisk 1.1
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+
+    <div class="space-y-3 fade-up" style="transition-delay:.15s">
+
+      <!-- Lesson 1: Commands -->
+      <a href="lesson.html" class="module-row flex no-underline hover:border-[#00C853]/40">
+        <div class="w-8 h-8 rounded-sm bg-[rgba(0,200,83,.12)] border border-[rgba(0,200,83,.25)] flex items-center justify-center flex-shrink-0 font-display font-700 text-[#00C853] text-sm">1</div>
+        <div class="flex-1">
+          <div class="font-display font-600 text-white text-sm mb-0.5">Հրամանները</div>
+          <div class="text-[#4a7a5a] text-xs">ՄարդՌիսկի ԱԻ հրամանների համակարգ — /analyze, /RiskScore, /խորհուրդ և այլ հրամաններ</div>
+        </div>
+        <span class="text-[#00C853] text-xs font-display tracking-wide hidden sm:block">ԴԱՍ 01 →</span>
+      </a>
+
+      <!-- Lesson 2: Main Functions -->
+      <a href="lesson1.html" class="module-row flex no-underline hover:border-[#00C853]/40">
+        <div class="w-8 h-8 rounded-sm bg-[rgba(0,200,83,.12)] border border-[rgba(0,200,83,.25)] flex items-center justify-center flex-shrink-0 font-display font-700 text-[#00C853] text-sm">2</div>
+        <div class="flex-1">
+          <div class="font-display font-600 text-white text-sm mb-0.5">Հիմնական ֆունկցիաներ</div>
+          <div class="text-[#4a7a5a] text-xs">Կարգավորումներ, փաթեթներ, MardRisk Shield, զրույցների ջնջում և հիմնական գործիքներ</div>
+        </div>
+        <span class="text-[#00C853] text-xs font-display tracking-wide hidden sm:block">ԴԱՍ 02 →</span>
+      </a>
+
+      <!-- Lesson 3 -->
+      <a href="lesson2.html" class="module-row flex no-underline hover:border-[#00C853]/40">
+        <div class="w-8 h-8 rounded-sm bg-[rgba(0,200,83,.12)] border border-[rgba(0,200,83,.25)] flex items-center justify-center flex-shrink-0 font-display font-700 text-[#00C853] text-sm">3</div>
+        <div class="flex-1">
+          <div class="font-display font-600 text-white text-sm mb-0.5">Սիմուլյացիաներ և սթրես-թեստեր</div>
+          <div class="text-[#4a7a5a] text-xs">1000 սցենար մուլտի-ագենտ համակարգով, կանխատեսումներ և ռիսկի խորքային վերլուծություն</div>
+        </div>
+        <span class="text-[#00C853] text-xs font-display tracking-wide hidden sm:block">ԴԱՍ 03 →</span>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     MARD RISK 1.1 COMMANDS — PREMIUM ENTERPRISE SECTION
+════════════════════════════════════════════ -->
+<div class="section-divider"></div>
+
+<section id="commands" class="px-6 lg:px-10 py-24 bg-[#0a0f0c]">
+  <div class="max-w-7xl mx-auto">
+    
+    <div class="flex flex-col lg:flex-row gap-16 items-center mb-16">
+      <div class="flex-1">
+        <p class="text-[#00C853] font-display text-xs tracking-[.22em] uppercase mb-3" data-i18n="cmd_label">ՄարդՌիսկ 1.1 — ԱԻ հրամանների համակարգ</p>
+        <h2 class="font-display font-700 text-3xl sm:text-4xl lg:text-5xl leading-tight text-white" data-i18n="cmd_title">Հրամայեք Ձեր ֆինանսական ապագան</h2>
+        <p class="text-[#8aab96] mt-4 max-w-lg text-lg" data-i18n="cmd_desc">Ինստիտուցիոնալ մակարդակի ԱԻ գործիքներ ձեր հրամանով։ Ուղիղ վերլուծություն, ռիսկի գնահատում, անհատական պլաններ և խորքային սցենարների սիմուլացիաներ։</p>
+        
+        <div class="mt-8 inline-flex items-center gap-x-2 bg-[#111916] border border-[#00C853]/20 rounded-2xl px-5 py-3 text-sm">
+          <div class="flex items-center gap-1.5">
+            <span class="text-[#00C853] font-mono">/</span>
+            <span class="font-medium">Գրեք հրամաններ չաթում</span>
+          </div>
+          <div class="h-3 w-px bg-[#00C853]/30"></div>
+          <span class="text-[#4a7a5a] text-xs">Ուղիղ • Անվտանգ • Գաղտնի • Միլիոնավոր դոլարի ենթակառուցվածք</span>
+        </div>
+      </div>
+      
+      <!-- Mini terminal preview -->
+      <div class="flex-1 bg-[#080c0a] border border-[#00C853]/25 rounded-3xl p-1 shadow-2xl">
+        <div class="bg-[#0d1210] rounded-3xl p-6 font-mono text-xs leading-relaxed">
+          <div class="flex justify-between text-[#4a7a5a] text-[10px] mb-4">
+            <div>ՄարդՌիսկ ԱԻ • Ուղիղ</div>
+            <div class="flex items-center gap-1">
+              <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+            </div>
+          </div>
+          
+          <div class="mb-5">
+            <span class="text-[#00C853]">></span> <span class="text-white">/analyze BTC/USD</span>
+          </div>
+          <div class="pl-5 text-[#a3c4b0] text-[13px] mb-6">
+            BTC <span class="text-white">$67,842</span> • -1.8% (24ժ)<br>
+            30-օրյա տատանումներ՝ <span class="text-amber-300">41%</span><br>
+            <span class="text-emerald-400">Բուլիշ ազդանշան ETF մուտքերից + ինստիտուցիոնալ գնումներից</span><br><br>
+            <span class="font-medium text-white">7-օրյա կանխատեսում՝</span> $69,200 – $73,400
+          </div>
+          
+          <div class="text-[#00C853] text-xs flex items-center gap-2">
+            <span>✓</span> ԷՔՍՊԵՐՏ ՌԵԺԻՄ՝ 1240 սցենար սիմուլացված
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6">
+      <!-- Command Card 1 -->
+      <div class="feature-card group">
+        <div class="flex justify-between items-start">
+          <div>
+            <div class="inline-block px-4 py-1.5 bg-[#00C853] text-black text-xs font-display font-bold tracking-widest rounded mb-6">/analyze BTC/USD</div>
+            <h3 class="font-display text-xl font-semibold text-white group-hover:text-[#00C853] transition-colors">Շուկայի ինտելեկտ</h3>
+            <p class="text-[#6a8a76] mt-2 text-sm">Ուղիղ գների վերլուծություն, տատանումների պատմություն, նորությունների ազդեցության գնահատում, ընթացիկ արժեք + վերջին նորություններ և հավանականության կանխատեսումներ հստակ գործողությունների պլանով։</p>
+          </div>
+          <div class="text-4xl text-[#00C853]/10 group-hover:text-[#00C853]/30 transition-colors font-display font-bold">01</div>
+        </div>
+        <div class="mt-10 text-xs font-mono text-[#00C853] flex items-center gap-2 flex-wrap">
+          <span class="px-3 py-1 bg-black/30 rounded">BTC/USD</span>
+          <span class="px-3 py-1 bg-black/30 rounded">AMD/USD</span>
+          <span class="px-3 py-1 bg-black/30 rounded">Ցանկացած ակտիվ</span>
+          <span class="text-[#4a7a5a] text-[10px]">Ինտերակտիվ գրաֆիկ չաթում • Պատմական + ապագա կանխատեսում</span>
+        </div>
+      </div>
+
+      <!-- Command Card 2 -->
+      <div class="feature-card group">
+        <div class="flex justify-between items-start">
+          <div>
+            <div class="inline-block px-4 py-1.5 bg-[#00C853] text-black text-xs font-display font-bold tracking-widest rounded mb-6">/RiskScore</div>
+            <h3 class="font-display text-xl font-semibold text-white group-hover:text-[#00C853] transition-colors">Անհատական ռիսկի գնահատում</h3>
+            <p class="text-[#6a8a76] mt-2 text-sm">Մուտքագրեք եկամուտ, խնայողություններ, պարտք (օրինակ՝ 10000 դրամ եկամուտ, 2000 խնայողություն, 30000 պարտք) → ակնթարթային 1-100 միավոր + մանրամասն 30/60/90 օրյա նվազեցման պլան։</p>
+          </div>
+          <div class="text-4xl text-[#00C853]/10 group-hover:text-[#00C853]/30 transition-colors font-display font-bold">02</div>
+        </div>
+        <div class="mt-8 p-4 bg-[#111916] rounded-2xl text-xs">
+          <div class="flex justify-between"><span class="text-[#4a7a5a]">Եկամուտ</span><span>10,000 դրամ/ամիս</span></div>
+          <div class="h-px bg-white/10 my-3"></div>
+          <div class="flex justify-between text-emerald-400"><span>Ռիսկի միավոր</span><span class="font-bold text-2xl">64</span></div>
+          <div class="mt-4 text-[#00C853] text-xs">Պլան՝ 90 օրում իջեցնել մինչև &lt;40</div>
+        </div>
+      </div>
+
+      <!-- Command Card 3 -->
+      <div class="feature-card group">
+        <div class="flex justify-between items-start">
+          <div>
+            <div class="inline-block px-4 py-1.5 bg-[#00C853] text-black text-xs font-display font-bold tracking-widest rounded mb-6">/խորհուրդ • /advice</div>
+            <h3 class="font-display text-xl font-semibold text-white group-hover:text-[#00C853] transition-colors">Անհատական խորհուրդ</h3>
+            <p class="text-[#6a8a76] mt-2 text-sm">Պարտքերի պլաններ (օրինակ՝ 1000 դրամ պարտք), ծախսերի հաշվարկ, քայլ առ քայլ գործողություններ, բյուջեի օպտիմիզացիա։ Ձեր իրավիճակի լիարժեք հասկացություն + ճշգրիտ հաջորդ քայլեր։</p>
+          </div>
+          <div class="text-4xl text-[#00C853]/10 group-hover:text-[#00C853]/30 transition-colors font-display font-bold">03</div>
+        </div>
+        <p class="mt-8 text-xs italic text-[#4a7a5a]">«Ի՞նչ անեմ 1000 դրամ պարտքով» → Ակնթարթային գործողությունների պլան ծախսերի մանրամասնությամբ</p>
+      </div>
+    </div>
+
+    <!-- Expert Mode Banner -->
+    <div class="mt-16 bg-gradient-to-r from-[#111916] to-[#0d1210] border border-[#00C853]/30 rounded-3xl p-8 lg:p-10 flex flex-col md:flex-row items-center gap-8">
+      <div class="flex-1">
+        <span class="px-6 py-2 bg-[#00C853]/10 text-[#00C853] text-sm font-medium rounded-3xl">ԷՔՍՊԵՐՏ ՍԻՄՈՒԼԱՑԻԱՅԻ ՌԵԺԻՄ</span>
+        <h3 class="font-display text-3xl mt-4 leading-none">1000+ Մոնտե Կարլոյի սցենարներ</h3>
+        <p class="text-[#8aab96] mt-3">Խորքային տրամաբանության շարժիչը գործարկում է հազարավոր շուկայական սիմուլացիաներ, պատմական հետադարձ ստուգումներ, արժույթի ազդեցության վերլուծություն և սթրես-թեստավորում ցանկացած ներդրման կամ որոշման համար նախքան դուք գործեք։</p>
+      </div>
+      <div class="text-center md:text-right">
+        <a href="https://ai.mardriskai.online" target="_blank" class="btn-primary text-base px-8" data-i18n="commands_expert_cta">Ակտիվացրեք էքսպերտ ռեժիմը չաթում</a>
+      </div>
+    </div>
+
+    <div class="mt-12 text-center">
+      <p class="text-[#4a7a5a] text-sm max-w-md mx-auto">Նաև պատասխանում է ցանկացած ֆինանսական հարցի՝ ընթացիկ AMD/USD դրույք, այսօրվա ֆինանսական նորություններ, բիզնես մոդելավորում, պորտֆոլիոյի վերլուծություն և ցուցադրում է ուղիղ ինտերակտիվ գրաֆիկներ (BTC/USD և այլն) անմիջապես չաթում։</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     SOCIAL PROOF / TESTIMONIALS
+════════════════════════════════════════════ -->
+<div class="section-divider"></div>
+
+<section id="testimonials" class="max-w-7xl mx-auto px-6 lg:px-10 py-24">
+  <div class="text-center mb-14 fade-up">
+    <p class="text-[#00C853] font-display text-xs tracking-[.22em] uppercase mb-3">Համայնք</p>
+    <h2 class="font-display font-700 text-3xl sm:text-4xl text-white leading-tight mb-4">Առաջին ձայներ</h2>
+    <p class="text-[#6a8a76] max-w-lg mx-auto text-sm">Մենք ստեղծում ենք այնպիսի բան, որը ֆինանսական աշխարհը դեռ չի տեսել։ Ահա թե ինչ են ասում մեր վաղ հասանելիության համայնքի անդամները։</p>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-6">
+
+    <!-- Placeholder 1 -->
+    <div class="testimonial-card fade-up">
+      <div class="flex gap-1">
+        <span class="text-[#00C853] text-sm">★★★★★</span>
+      </div>
+      <p class="text-[#6a8a76] text-sm leading-relaxed italic">"Վերջապես դասընթաց, որը չի սովորեցնում միայն տեսություն։ ԱԻ սթրես-թեստավորման շրջանակը փոխեց իմ վերաբերմունքը յուրաքանչյուր ներդրման որոշման նկատմամբ։"</p>
+      <div class="flex items-center gap-3 mt-2">
+        <div class="w-9 h-9 rounded-full bg-[rgba(0,200,83,.15)] border border-[rgba(0,200,83,.2)] flex items-center justify-center font-display font-700 text-[#00C853] text-sm">AK</div>
+        <div>
+          <div class="text-white text-sm font-display font-600">Ա. Կովալչիկ</div>
+          <div class="text-[#4a6455] text-xs">Պորտֆոլիոյի կառավարիչ · Վարշավա</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Placeholder 2 -->
+    <div class="testimonial-card fade-up" style="transition-delay:.12s">
+      <div class="flex gap-1">
+        <span class="text-[#00C853] text-sm">★★★★★</span>
+      </div>
+      <p class="text-[#6a8a76] text-sm leading-relaxed italic">"Բյուջեի սթրես-թեստավորման մոդուլը միայնակ արժեր վայթլիստին վաղ միանալը։ Այն բացահայտեց իմ անձնական ֆինանսների թույլ կողմերը, որոնք ես ամբողջովին չէի նկատել։"</p>
+      <div class="flex items-center gap-3 mt-2">
+        <div class="w-9 h-9 rounded-full bg-[rgba(0,200,83,.15)] border border-[rgba(0,200,83,.2)] flex items-center justify-center font-display font-700 text-[#00C853] text-sm">RM</div>
+        <div>
+          <div class="text-white text-sm font-display font-600">Ռ. Մեսաուդի</div>
+          <div class="text-[#4a6455] text-xs">Ձեռնարկատեր · Դուբայ</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Placeholder 3 -->
+    <div class="testimonial-card fade-up" style="transition-delay:.24s">
+      <div class="flex gap-1">
+        <span class="text-[#00C853] text-sm">★★★★★</span>
+      </div>
+      <p class="text-[#6a8a76] text-sm leading-relaxed italic">"ՄարդՌիսկ Ակադեմիան կամուրջ է ստեղծում առաջադեմ ԱԻ հետազոտությունների և գործնական անձնական ֆինանսների միջև։ Վկայականն ունի իրական վստահություն։"</p>
+      <div class="flex items-center gap-3 mt-2">
+        <div class="w-9 h-9 rounded-full bg-[rgba(0,200,83,.15)] border border-[rgba(0,200,83,.2)] flex items-center justify-center font-display font-700 text-[#00C853] text-sm">SP</div>
+        <div>
+          <div class="text-white text-sm font-display font-600">Ս. Պետրով</div>
+          <div class="text-[#4a6455] text-xs">Քվանտիտատիվ անալիտիկ · Լոնդոն</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CTA banner -->
+  <div class="mt-12 bg-[#0d1210] border border-[rgba(0,200,83,.18)] rounded-lg p-8 flex flex-col sm:flex-row items-center justify-between gap-6 fade-up">
+    <div>
+      <h3 class="font-display font-700 text-xl text-white mb-1" data-i18n="community_cta_title">Պատրա՞ստ եք սկսել ձեր ֆինանսական ճանապարհորդությունը։</h3>
+      <p class="text-[#6a8a76] text-sm" data-i18n="community_cta_sub">MardRisk 1.1-ը սպասում է ձեզ։ Ակադեմիայի դասերը կօգնեն ձեզ ավելի արդյունավետ օգտագործել այն։</p>
+    </div>
+    <a href="https://ai.mardriskai.online" target="_blank" class="btn-primary whitespace-nowrap" data-i18n="community_cta_btn">
+      Բացել MardRisk 1.1
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     WAITLIST / NEWSLETTER
+════════════════════════════════════════════ -->
+<div class="section-divider"></div>
+
+<section id="waitlist" class="px-6 lg:px-10 py-24 relative overflow-hidden bg-[#0a0f0c]">
+  <!-- Glow -->
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(0,200,83,.09) 0%,transparent 65%);pointer-events:none;"></div>
+
+  <div class="max-w-2xl mx-auto text-center relative z-10 fade-up">
+    <p class="text-[#00C853] font-display text-xs tracking-[.22em] uppercase mb-3" data-i18n="launch_label">MardRisk 1.1</p>
+    <h2 class="font-display font-700 text-3xl sm:text-4xl text-white leading-tight mb-4" data-i18n="launch_title">
+      Բացեք MardRisk 1.1-ը հիմա<br/><span class="text-[#8aab96]">և սկսեք ձեր ֆինանսական պաշտպանությունը</span>
+    </h2>
+    <p class="text-[#6a8a76] mb-8 text-sm leading-relaxed" data-i18n="launch_desc">
+      Ակադեմիան օգնում է սովորել։ Հիմնական գործիքը՝ MardRisk 1.1-ը հասանելի է անմիջապես։ Մուտք գործեք բոլոր հրամանները, սիմուլյացիաները և Shield-ը։
+    </p>
+
+    <a href="https://ai.mardriskai.online" target="_blank" class="btn-primary text-lg px-10 py-4 inline-flex" data-i18n="launch_cta">
+      Բացել MardRisk 1.1
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+
+    <p class="mt-6 text-[#4a7a5a] text-xs" data-i18n="launch_note">Հասանելի է Advanced փաթեթում՝ 1000 սցենար սիմուլյացիա, Shield և էքսպերտ ռեժիմ։</p>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════ -->
+<footer id="newsletter" class="border-t border-[rgba(0,200,83,.1)] bg-[#080c0a]">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 py-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
+
+    <!-- Brand -->
+    <div class="lg:col-span-1">
+      <div class="flex items-center gap-2.5 mb-4">
+        <div class="w-7 h-7 rounded-sm bg-[#00C853] flex items-center justify-center">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 12 L8 4 L14 12" stroke="#080c0a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <span class="font-display font-700 text-white text-base">ՄարդՌիսկ <span class="text-[#00C853]">Ակադեմիա</span></span>
+      </div>
+      <p class="text-[#4a6455] text-xs leading-relaxed">ՄարդՌիսկ ԱԻ էկոհամակարգի կրթական բաժինը։ ԱԻ-ով ղեկավարվող ֆինանսական ինտելեկտի դասավանդում։</p>
+    </div>
+
+    <!-- Links -->
+    <div>
+      <h4 class="font-display font-600 text-[#8aab96] text-xs tracking-[.15em] uppercase mb-4" data-i18n="footer_academy">Ակադեմիա</h4>
+      <ul class="space-y-2.5 text-sm text-[#4a6455] list-none">
+        <li><a href="#curriculum" class="hover:text-[#00C853] transition-colors" data-i18n="nav_curriculum">Դասընթացի ծրագիր</a></li>
+        <li><a href="#why" class="hover:text-[#00C853] transition-colors" data-i18n="nav_why">Ինչու՞ Ակադեմիա</a></li>
+        <li><a href="#commands" class="hover:text-[#00C853] transition-colors" data-i18n="nav_commands">Հրամաններ</a></li>
+        <li><a href="#testimonials" class="hover:text-[#00C853] transition-colors" data-i18n="nav_community">Համայնք</a></li>
+        <li><a href="https://ai.mardriskai.online" target="_blank" class="hover:text-[#00C853] transition-colors" data-i18n="nav_open_app">Բացել MardRisk 1.1</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4 class="font-display font-600 text-[#8aab96] text-xs tracking-[.15em] uppercase mb-4" data-i18n="footer_mardrisk">ՄարդՌիսկ</h4>
+      <ul class="space-y-2.5 text-sm text-[#4a6455] list-none">
+        <li><a href="https://mardriskai.online" target="_blank" class="hover:text-[#00C853] transition-colors" data-i18n="footer_website">Կայք</a></li>
+        <li><a href="https://ai.mardriskai.online" target="_blank" class="hover:text-[#00C853] transition-colors" data-i18n="footer_platform">ԱԻ հարթակ</a></li>
+        <li><a href="https://mardriskai.online/en/privacy/" target="_blank" class="hover:text-[#00C853] transition-colors" data-i18n="footer_policy">Գաղտնիության քաղաքականություն</a></li>
+        <li><a href="https://mardriskai.online/en/terms" target="_blank" class="hover:text-[#00C853] transition-colors" data-i18n="footer_terms">Օգտագործման պայմաններ</a></li>
+      </ul>
+    </div>
+
+    <!-- Newsletter -->
+    <div>
+      <h4 class="font-display font-600 text-[#8aab96] text-xs tracking-[.15em] uppercase mb-4" data-i18n="footer_newsletter">Նամակագրություն</h4>
+      <p class="text-[#4a6455] text-xs mb-3" data-i18n="footer_newsletter_desc">Շաբաթական ԱԻ ֆինանսական պատկերացումներ։ Առանց սպամի։</p>
+      <form class="flex flex-col gap-2" onsubmit="handleNewsletter(event)">
+        <input type="email" class="dark-input text-sm" placeholder="your@email.com" required />
+        <button type="submit" class="btn-outline text-sm justify-center" data-i18n="footer_subscribe">Բաժանորդագրվել</button>
+      </form>
+      <p id="newsletter-success" class="mt-2 text-[#00C853] text-xs hidden" data-i18n="footer_subscribed">✓ Բաժանորդագրված եք։</p>
+    </div>
+
+  </div>
+
+  <!-- Bottom bar -->
+  <div class="border-t border-[rgba(0,200,83,.08)] px-6 lg:px-10 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 max-w-7xl mx-auto">
+    <p class="text-[#2a4a3a] text-xs" data-i18n="footer_copyright">© 2025 ՄարդՌիսկ Ակադեմիա։ Բոլոր իրավունքները պաշտպանված են։</p>
+    <div class="flex gap-6 text-[#2a4a3a] text-xs">
+      <a href="https://mardriskai.online/en/privacy/" target="_blank" class="hover:text-[#00C853] transition-colors" data-i18n="footer_policy">Գաղտնիության քաղաքականություն</a>
+      <a href="https://mardriskai.online/en/terms" target="_blank" class="hover:text-[#00C853] transition-colors" data-i18n="footer_terms">Օգտագործման պայմաններ</a>
+      <a href="https://mardriskai.online" target="_blank" class="hover:text-[#00C853] transition-colors" data-i18n="footer_website">mardriskai.online</a>
+      <a href="lesson2.html" class="hover:text-[#00C853] transition-colors">Դաս 03</a>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ═══════════════════════════════════════════
+     JS
+════════════════════════════════════════════ -->
+<script>
+  // Scroll-triggered fade-up
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // Newsletter form (demo)
+  function handleNewsletter(e) {
+    e.preventDefault();
+    const el = document.getElementById('newsletter-success');
+    el.classList.remove('hidden');
+    e.target.reset();
+    setTimeout(() => el.classList.add('hidden'), 4000);
+  }
+
+  // Auto-close mobile nav when a link is clicked
+  document.querySelectorAll('details a').forEach(link => {
+    link.addEventListener('click', () => {
+      link.closest('details').removeAttribute('open');
+    });
+  });
+
+  // ==================== 3-LANGUAGE I18N SYSTEM ====================
+  const translations = {
+    hy: {
+      // Nav
+      nav_why: "Ինչու՞ Ակադեմիա",
+      nav_curriculum: "Դասընթացի ծրագիր",
+      nav_commands: "Հրամաններ",
+      nav_community: "Համայնք",
+      nav_newsletter: "Նամակագրություն",
+      nav_open_app: "Բացել MardRisk 1.1",
+      // Hero
+      hero_badge: "ՄարդՌիսկ 1.1",
+      hero_title: "Վերահսկեք Ձեր ֆինանսական\nապագան",
+      hero_subtitle: "ԱԻ-ով ղեկավարվող\nտրամաբանությամբ։",
+      hero_desc: "Սովորեք սթրես-թեստավորել ձեր ներդրումները և պաշտպանել ձեր կապիտալը ՄարդՌիսկ Ակադեմիայի միջոցով — որտեղ խորքային ԱԻ տրամաբանությունն հանդիպում է իրական աշխարհի ֆինանսական ինտելեկտին։",
+      hero_cta_app: "Բացել MardRisk 1.1",
+      hero_cta_curriculum: "Դիտեք դասընթացի ծրագիրը",
+      // Curriculum
+      curriculum_desc: "Յուրաքանչյուր դաս հաջորդաբար կառուցում է իրական կոմպետենտություն — հիմնական հրամաններից մինչև հիմնական ֆունկցիաներ և առաջադեմ ԱԻ սիմուլացիաներ։ Առանց ավելորդի։ Առանց տեսության տեսության համար։",
+      curriculum_cta: "Բացել MardRisk 1.1",
+      curr_learn_label: "Ինչ կսովորեք",
+      curr_title: "Դասընթացի ծրագիր, որը ստեղծված է\nԺամանակակից ներդրողի համար",
+      // Community / testimonials CTA
+      community_cta_title: "Պատրա՞ստ եք սկսել ձեր ֆինանսական ճանապարհորդությունը։",
+      community_cta_sub: "MardRisk 1.1-ը սպասում է ձեզ։ Ակադեմիայի դասերը կօգնեն ձեզ ավելի արդյունավետ օգտագործել այն։",
+      community_cta_btn: "Բացել MardRisk 1.1",
+      // Launch section
+      launch_label: "MardRisk 1.1",
+      launch_title: "Բացեք MardRisk 1.1-ը հիմա\nև սկսեք ձեր ֆինանսական պաշտպանությունը",
+      launch_desc: "Ակադեմիան օգնում է սովորել։ Հիմնական գործիքը՝ MardRisk 1.1-ը հասանելի է անմիջապես։ Մուտք գործեք բոլոր հրամանները, սիմուլյացիաները և Shield-ը։",
+      launch_cta: "Բացել MardRisk 1.1",
+      launch_note: "Հասանելի է Advanced փաթեթում՝ 1000 սցենար սիմուլյացիա, Shield և էքսպերտ ռեժիմ։",
+      cmd_label: "ՄարդՌիսկ 1.1 — ԱԻ հրամանների համակարգ",
+      cmd_title: "Հրամայեք Ձեր ֆինանսական ապագան",
+      cmd_desc: "Ինստիտուցիոնալ մակարդակի ԱԻ գործիքներ ձեր հրամանով։ Ուղիղ վերլուծություն, ռիսկի գնահատում, անհատական պլաններ և խորքային սցենարների սիմուլացիաներ։",
+      cmd_title: "Command Your Financial Future",
+      cmd_desc: "Institutional-grade AI tools at your command. Real-time analysis, risk scoring, personalized plans, and deep scenario simulations.",
+      // Footer
+      footer_academy: "Ակադեմիա",
+      footer_mardrisk: "ՄարդՌիսկ",
+      footer_website: "Կայք",
+      footer_platform: "ԱԻ հարթակ",
+      footer_policy: "Գաղտնիության քաղաքականություն",
+      footer_terms: "Օգտագործման պայմաններ",
+      footer_newsletter: "Նամակագրություն",
+      footer_newsletter_desc: "Շաբաթական ԱԻ ֆինանսական պատկերացումներ։ Առանց սպամի։",
+      footer_subscribe: "Բաժանորդագրվել",
+      footer_subscribed: "✓ Բաժանորդագրված եք։",
+      footer_copyright: "© 2025 ՄարդՌիսկ Ակադեմիա։ Բոլոր իրավունքները պաշտպանված են։"
+    },
+    en: {
+      nav_why: "Why Academy",
+      nav_curriculum: "Curriculum",
+      nav_commands: "Commands",
+      nav_community: "Community",
+      nav_newsletter: "Newsletter",
+      nav_open_app: "Open MardRisk 1.1",
+      hero_badge: "MardRisk 1.1",
+      hero_title: "Take Control of Your\nFinancial Future",
+      hero_subtitle: "AI-Powered\nReasoning.",
+      hero_desc: "Learn to stress-test your investments and protect your capital with the MardRisk Academy — where deep AI logic meets real-world financial intelligence.",
+      hero_cta_app: "Open MardRisk 1.1",
+      hero_cta_curriculum: "View the curriculum",
+      curriculum_desc: "Each lesson progressively builds real competence — from core commands to main functions and advanced AI simulations. No fluff. No theory for theory's sake.",
+      curriculum_cta: "Open MardRisk 1.1",
+      curr_learn_label: "What you will learn",
+      curr_title: "A curriculum built\nfor the modern investor",
+      community_cta_title: "Ready to start your financial journey?",
+      community_cta_sub: "MardRisk 1.1 is waiting for you. The Academy lessons will help you use it more effectively.",
+      community_cta_btn: "Open MardRisk 1.1",
+      launch_label: "MardRisk 1.1",
+      launch_title: "Open MardRisk 1.1 Now\nand Start Protecting Your Finances",
+      launch_desc: "The Academy helps you learn. The main tool — MardRisk 1.1 — is available instantly. Access all commands, simulations, and Shield.",
+      launch_cta: "Open MardRisk 1.1",
+      launch_note: "Available in the Advanced plan — 1000 scenario simulations, Shield, and expert mode.",
+      footer_academy: "Academy",
+      footer_mardrisk: "MardRisk",
+      footer_website: "Website",
+      footer_platform: "AI Platform",
+      footer_policy: "Privacy Policy",
+      footer_terms: "Terms of Service",
+      footer_newsletter: "Newsletter",
+      footer_newsletter_desc: "Weekly AI financial insights. No spam.",
+      footer_subscribe: "Subscribe",
+      footer_subscribed: "✓ Subscribed.",
+      footer_copyright: "© 2025 MardRisk Academy. All rights reserved."
+    },
+    ru: {
+      nav_why: "Почему Академия",
+      nav_curriculum: "Программа курса",
+      nav_commands: "Команды",
+      nav_community: "Сообщество",
+      nav_newsletter: "Рассылка",
+      nav_open_app: "Открыть MardRisk 1.1",
+      hero_badge: "MardRisk 1.1",
+      hero_title: "Возьмите под контроль\nсвоё финансовое будущее",
+      hero_subtitle: "ИИ-управляемая\nлогика.",
+      hero_desc: "Научитесь стресс-тестировать инвестиции и защищать капитал с MardRisk Academy — где глубокая логика ИИ встречается с реальным финансовым интеллектом.",
+      hero_cta_app: "Открыть MardRisk 1.1",
+      hero_cta_curriculum: "Посмотреть программу",
+      curriculum_desc: "Каждый урок последовательно формирует реальную компетенцию — от базовых команд до основных функций и продвинутых ИИ-симуляций. Без воды. Без теории ради теории.",
+      curriculum_cta: "Открыть MardRisk 1.1",
+      curr_learn_label: "Чему вы научитесь",
+      curr_title: "Программа курса,\nсозданная для современного инвестора",
+      community_cta_title: "Готовы начать финансовое путешествие?",
+      community_cta_sub: "MardRisk 1.1 ждёт вас. Уроки Академии помогут использовать его эффективнее.",
+      community_cta_btn: "Открыть MardRisk 1.1",
+      launch_label: "MardRisk 1.1",
+      launch_title: "Откройте MardRisk 1.1 прямо сейчас\nи начните защищать свои финансы",
+      launch_desc: "Академия помогает учиться. Основной инструмент — MardRisk 1.1 — доступен мгновенно. Получите доступ ко всем командам, симуляциям и Shield.",
+      launch_cta: "Открыть MardRisk 1.1",
+      launch_note: "Доступно в тарифе Advanced — 1000 сценариев симуляции, Shield и экспертный режим.",
+      cmd_label: "MardRisk 1.1 — Система команд ИИ",
+      cmd_title: "Командуйте своим финансовым будущим",
+      cmd_desc: "Инструменты ИИ институционального уровня по вашему приказу. Анализ в реальном времени, оценка рисков, персональные планы и глубокие симуляции сценариев.",
+      footer_academy: "Академия",
+      footer_mardrisk: "MardRisk",
+      footer_website: "Сайт",
+      footer_platform: "ИИ-платформа",
+      footer_policy: "Политика конфиденциальности",
+      footer_terms: "Условия использования",
+      footer_newsletter: "Рассылка",
+      footer_newsletter_desc: "Еженедельные финансовые инсайты от ИИ. Без спама.",
+      footer_subscribe: "Подписаться",
+      footer_subscribed: "✓ Подписаны.",
+      footer_copyright: "© 2025 MardRisk Academy. Все права защищены."
+    }
+  };
+
+  function setLanguage(lang) {
+    localStorage.setItem('lang', lang);
+    document.documentElement.lang = (lang === 'hy' ? 'hy' : lang === 'en' ? 'en' : 'ru');
+
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      const t = translations[lang] && translations[lang][key];
+      if (t) {
+        // preserve inner HTML for cases with <br/> or <strong>
+        if (t.includes('\n')) {
+          el.innerHTML = t.replace(/\n/g, '<br/>');
+        } else {
+          el.textContent = t;
+        }
+      }
+    });
+
+    // Update active state on lang buttons
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.toggle('bg-[#00C853]', btn.dataset.lang === lang);
+      btn.classList.toggle('text-black', btn.dataset.lang === lang);
+      btn.classList.toggle('font-semibold', btn.dataset.lang === lang);
+    });
+  }
+
+  // Initialize language
+  function initLanguage() {
+    const saved = localStorage.getItem('lang') || 'hy';
+    setLanguage(saved);
+
+    // Wire up all language buttons (desktop + mobile)
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const chosen = btn.dataset.lang;
+        setLanguage(chosen);
+      });
+    });
+  }
+
+  // Boot
+  initLanguage();
+
+  // Optional console
+  console.log('%c🚀 MardRisk Academy — 3 languages + normalized links ready', 'color:#00C853; font-family:monospace; font-size:11px;');
+</script>
+
+</body>
+</html>
